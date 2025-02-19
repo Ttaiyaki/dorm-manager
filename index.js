@@ -26,6 +26,10 @@ app.get("/", (req, res) => { // testing server
   res.sendFile(path.join(__dirname, "/public/test.html"));
 });
 
+app.get('/home', (req, res) => {
+  res.render('clientHome');
+})
+
 app.listen(3000, () => {
   console.log("Server running at http://localhost:3000");
 });
