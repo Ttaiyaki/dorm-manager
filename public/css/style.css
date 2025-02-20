@@ -1,3 +1,17 @@
 body {
     font-family: "Noto Sans Thai", serif;
+    background-color: #C6EEF5;
+}
+
+nav .container-fluid a {
+    color: white;
+}
+
+.card {
+    margin: 20px;
+    width: 60%;
+}
+
+.client-bill {
+    margin: 5px 10px;
 }

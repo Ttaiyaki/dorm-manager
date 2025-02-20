@@ -2,5 +2,39 @@
 <%- include('head') %>
 <body>
     <%- include('nav') %>
+    <main class="d-flex align-items-center flex-column">
+        <div class="card shadow-sm">
+            <div class="card-body d-flex justify-content-between">
+                <div class="w-100 p-2 d-flex flex-wrap">
+                    <div class="input-group client-bill" style="width: 10rem;">
+                        <span class="input-group-text" style="background-color: #A4C5CA;">ค่าหอ</span>
+                        <label id="rent-bill" class="form-control text-end">20000</label>
+                    </div>
+
+                    <div class="input-group client-bill" style="width: 10rem;">
+                        <span class="input-group-text" style="background-color: #A4C5CA;">ค่าน้ำ</span>
+                        <label id="electric-bill" class="form-control text-end">200</label>
+                    </div>
+
+                    <div class="input-group client-bill" style="width: 10rem;">
+                        <span class="input-group-text" style="background-color: #A4C5CA;">ค่าไฟ</span>
+                        <label id="water-bill" class="form-control text-end">2000</label>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary text-nowrap" style="height: 3rem; align-self: center;" onclick="window.location.href='#';">จ่ายเงิน</button>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body overflow-y-auto" style="max-height: 40rem;">
+                <h1>Room : 001</h1>
+                <h1>Room : 001</h1>
+                <h1>Room : 001</h1>
+                <h1>ค่าห้อง : 20000 บาท/เดือน</h1>
+                <img class="mw-100 rounded card-img" alt="" src="https://www.grandecentrepointpattaya.com/upload/rooms-and-suites/2-rooms-and-suites.jpg?v=66">
+            </div>
+        </div>
+    </main>
 </body>
 </html>
