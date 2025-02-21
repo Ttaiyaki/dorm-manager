@@ -1,0 +1,33 @@
+<%- include('head') %>
+<body>
+    <%- include('nav') %>
+    <main class="d-flex align-items-center flex-column">
+        <div class="card p-4" style="margin: 20px; width: 40%;">
+            <div class="card-body">
+                <h1>Profile</h1>
+                <form action="/update_profile" method="">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="input-group-left-example">ชื่อ</span>
+                        <input type="text" class="form-control" value="Hello">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">นามสกุล</span>
+                        <input type="text" class="form-control" value="How r u">
+                    </div>
+                    
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="input-group-left-example">Email</span>
+                        <input type="email" class="form-control" value="hello@gmail.com">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="input-group-left-example">phone</span>
+                        <input type="tel" class="form-control" value="0123456789">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

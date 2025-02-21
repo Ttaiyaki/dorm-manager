@@ -30,6 +30,14 @@ app.get('/home', (req, res) => {
   res.render('clientHome');
 })
 
+app.get('/profile', (req, res) => {
+  res.render('profile');
+})
+
+app.get('/profile/edit', (req, res) => {
+  res.render('profile-edit');
+})
+
 app.listen(3000, () => {
   console.log("Server running at http://localhost:3000");
 });
