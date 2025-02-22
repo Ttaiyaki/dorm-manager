@@ -22,13 +22,21 @@ app.set('view engine', 'ejs');
 
 
 //routing path
-app.get("/", (req, res) => { // testing server
-  res.sendFile(path.join(__dirname, "/public/test.html"));
+app.get("/", (req, res) => {
+  res.render('landingPage');
 });
+
+app.get('/log-in', (req, res) => {
+  res.render('log_in_page');
+})
+
+app.get('/register', (req, res) => {
+  res.render('register_page');
+})
 
 app.get('/home', (req, res) => {
   res.render('clientHome');
-})
+});
 
 app.listen(3000, () => {
   console.log("Server running at http://localhost:3000");
