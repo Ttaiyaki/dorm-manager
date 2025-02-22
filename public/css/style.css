@@ -1,6 +1,7 @@
 body {
     font-family: "Noto Sans Thai", serif;
-    background-color: #C6EEF5;
+    /* background-color: #C6EEF5; */
+    background-color: #FFF2F2;
 }
 
 nav .container-fluid a {
@@ -14,4 +15,101 @@ nav .container-fluid a {
 
 .client-bill {
     margin: 5px 10px;
+}
+
+.head-txt {
+    font-weight: 900;
+    font-size: 90px;
+}
+
+.img-center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+hr {
+    border: 1px solid rgb(34, 34, 34);
+    width: 90%;
+}
+
+
+/* log-in, register part */
+.land-grid {
+    margin: 50px;
+    margin-top: 70px;
+    margin-bottom: 70px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.land-txt {
+    padding: 30px;
+    padding-bottom: 5px;
+    align-self: center;
+}
+
+.land-btn {
+    padding-left: 30px;
+}
+
+.btn-size {
+    size: 100px;
+}
+
+.btn-lg {
+    width: 30%;
+    height: 12%;
+    text-align: center;
+}
+
+#bg-layer {
+    background-image: url('/image/wave-background.jpg');
+    /* filter: blur(8px); */
+    /* -webkit-filter: blur(8px); */
+    height: 100%;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    opacity: 0.7;
+}
+
+#form-layer {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+#overlay {
+    position: fixed;
+    display: none; /* ซ่อน overlay ตอนเริ่มต้น */
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.overlay-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 40%;
+}
+
+/* footer part */
+footer {
+    display: flex;
+    background: #4b4c58;
+    padding: 50px;
+    color: aliceblue;
 }
