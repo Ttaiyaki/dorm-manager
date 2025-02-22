@@ -46,6 +46,16 @@ app.get('/profile/edit', (req, res) => {
   res.render('profile-edit');
 })
 
+app.get('/rooms', (req, res) => {
+  res.render('roomList');
+})
+app.get('/rooms/:id', (req, res) => {
+  res.render('roomDetail');
+})
+app.get('/verify-payment', (req, res) => {
+  res.render('verifyPayment');
+})
+
 app.listen(3000, () => {
   console.log("Server running at http://localhost:3000");
 });
