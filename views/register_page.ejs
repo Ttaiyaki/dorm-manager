@@ -1,0 +1,72 @@
+<%- include('head') %>
+<body>
+    <%- include('navforlog') %>
+    <!-- <div id="bg-layer"></div> -->
+    <div id="form-layer" class="shadow-sm p-3 mb-5 bg-body rounded bg" style="margin: 70px; margin-left: 20%; margin-right: 20%;">
+        <h1 style="text-align: center; font-weight: 900; margin-top: 40px; margin-bottom: 30px;">ลงทะเบียนบัญชีผู้ใช้</h1>
+        <form class="row g-3" style="width: 80%; margin-left: auto; margin-right: auto;">
+            <h4 style="font-weight: 900;">1. ข้อมูลส่วนตัว</h4>
+            <div class="col-md-6">
+                <label for="firstName" class="form-label">ชื่อ</label>
+                <input type="text" class="form-control" id="firstName">
+            </div>
+            <div class="col-md-6">
+                <label for="lastName" class="form-label">นามสกุล</label>
+                <input type="text" class="form-control" id="lastName">
+            </div>
+            <div>
+                <label for="citizen" class="form-label">หมายเลขบัตรประชาชน</label>
+                <input type="text" class="form-control" id="citizen">
+            </div>
+            <div class="col-md-6">
+              <label for="phone" class="form-label">เบอร์โทรศัพท์</label>
+              <input type="tel" class="form-control" id="phone">
+            </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label">อีเมล</label>
+              <input type="email" class="form-control" id="email">
+            </div>
+
+            <h4 style="font-weight: 900; margin-top: 40px;">2. ข้อมูลที่พัก</h4>
+            <div style="width: 50%;">
+                <label for="roomNum" class="form-label">หมายเลขห้องพัก</label>
+                <input type="text" class="form-control" id="roomNum">
+            </div>
+            <div style="width: 50%;">
+                <label for="checkInDate" class="form-label">วันที่เข้าพัก</label>
+                <input type="date" class="form-control" id="checkInDate">
+            </div>
+            <div class="col-md-6">
+                <p style="margin-bottom: 2px;">ประเภทสัญญาเช่า</p>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="rent" id="rent1" value="option1">
+                    <label class="form-check-label" for="inlineRadio1">เช่ารายเดือน</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="rent" id="rent2" value="option2">
+                    <label class="form-check-label" for="inlineRadio2">เช่ารายปี</label>
+                </div>
+            </div>
+
+            <h4 style="font-weight: 900; margin-top: 40px;">3. ข้อมูลบัญชีผู้ใช้</h4>
+            <div>
+                <label for="citizen" class="form-label">ชื่อผู้ใช้ (Username)</label>
+                <input type="text" class="form-control" id="citizen">
+            </div>
+            <div class="col-md-6">
+              <label for="pwd" class="form-label">รหัสผ่าน</label>
+              <input type="password" class="form-control" id="pwd">
+            </div>
+            <div class="col-md-6">
+              <label for="pwd" class="form-label">ยืนยันรหัสผ่าน</label>
+              <input type="password" class="form-control" id="pwd">
+            </div>
+
+            <div class="col-12" style="margin-top: 30px;">
+                <button type="submit" class="btn btn-success">สร้างบัญชี</button>
+            </div>
+          </form>
+    </div>
+</body>
+<%- include('footer') %>
+</html>

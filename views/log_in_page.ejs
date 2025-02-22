@@ -1,0 +1,71 @@
+<%- include('head') %>
+<body>
+    <%- include('navforlog') %>
+    <div id="overlay">
+        <div class="overlay-content" style="justify-items: center; margin: 40px;">
+            <h1>ลืมรหัสผ่าน?</h1>
+            <form action="/resetPwd" method="get" style="width: 70%;">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="roomNum" placeholder="name@example.com">
+                    <label for="floatingInput">หมายเลขห้อง</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="email" placeholder="name@example.com">
+                    <label for="floatingInput">อีเมล</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="pwd" placeholder="name@example.com">
+                    <label for="floatingInput">รหัสผ่านใหม่</label>
+                </div>
+            </form>
+            <button type="submit" class="btn btn-success">เปลี่ยนรหัสผ่าน</button>
+            <button class="btn btn-danger" onclick="off()">ปิดหน้าต่าง</button>
+        </div>
+    </div>
+    <div class="land-grid">
+        <div id="left-side">
+            <img src="/image/log-in.png" alt="เข้าสู่ระบบ" style="width: 100%;">
+        </div>
+        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="justify-items: center; margin: 40px; margin-top: 0px;">
+            <h1 style="text-align: center; font-weight: 900; margin-top: 40px; margin-bottom: 30px;">เข้าสู่ระบบ</h1>
+            <form action="/getLogin" method="get" style="width: 50%;">
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="email">
+                    <label for="floatingInput">ชื่อผู้ใช้/อีเมล</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="pwd">
+                    <label for="floatingPassword">รหัสผ่าน</label>
+                </div>
+                <a href="#" style="float: right;" role="button" onclick="on()">ลืมรหัสผ่าน?</a>
+                <div style="justify-self: center; margin-top: 40px; margin-bottom: 30px;">
+                    <input type="submit" value="เข้าสู่ระบบ" class="btn btn-success">
+                </div>
+            </form>
+            <hr>
+            <p style="margin-top: 30px;">คุณยังไม่มีบัญชี? <a href="/register">ลงทะเบียน</a></p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("overlay").style.display = "none";
+        });
+
+        function on() {
+            document.getElementById("overlay").style.display = "flex";
+        }
+
+        function off() {
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        // ปิด overlay เมื่อกดปุ่ม Esc
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Escape") {
+                off();
+            }
+        });
+    </script>
+</body>
+<%- include('footer') %>
+</html>
