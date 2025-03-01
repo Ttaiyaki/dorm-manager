@@ -14,17 +14,16 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// static folder
-app.use(express.static("public"));
-app.use('/lessee', require('./routes/lesseeRoutes'));
-app.use('/lesser', require('./routes/lesserRoutes'));
-
 // ejs template
 app.set('view engine', 'ejs');
 
 // cookie - parser
 app.use(cookieParser());
 
+// static folder
+app.use(express.static("public"));
+app.use('/lessee', require('./routes/lesseeRoutes'));
+app.use('/lesser', require('./routes/lesserRoutes'));
 
 //routing path
 app.get("/", (req, res) => {
