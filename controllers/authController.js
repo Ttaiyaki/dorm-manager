@@ -1,12 +1,11 @@
-const userService = require('../services/loginService');
+const loginService = require('../services/loginService');
 
 // ฟังก์ชันจัดการการเข้าสู่ระบบ
 const loginUser = (req, res) => {
     const { user_name, user_password } = req.body;
-    console.log(req.body);
 
     // ใช้ service เพื่อตรวจสอบข้อมูลผู้ใช้
-    userService.getUserByUsername(user_name, (err, user) => {
+    loginService.getUserByUsername(user_name, (err, user) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
@@ -15,7 +14,7 @@ const loginUser = (req, res) => {
         }
 
         // ตรวจสอบรหัสผ่าน
-        if (userService.verifyPassword(user_password, user.user_password)) {
+        if (loginService.verifyPassword(user_password, user.user_password)) {
             res.cookie('user_id', user.user_id, { httpOnly: true, maxAge: 3600000 });  // ตั้งค่า cookie user_id
             return res.redirect('/lessee');
         } else {
