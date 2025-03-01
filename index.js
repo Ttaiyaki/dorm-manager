@@ -3,18 +3,12 @@ const path = require("path");
 const port = 3000;
 const sqlite = require('sqlite3').verbose();
 const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const { create_account } = require("./controllers/registerSys");
+const { createDiffieHellmanGroup } = require("crypto");
 
 // creating the Express server
 const app = express();
-
-// connect to SQLite database
-// let db = new sqlite.Database('dormitory.db', (err) =>{
-//   if (err) {
-//     return console.error(err.message);
-//   };
-//   console.log('Connected to the SQLite database.');
-// });
 
 // ตั้งค่า middleware สำหรับ parsing ข้อมูล body
 app.use(express.json());
@@ -45,8 +39,26 @@ app.get('/register', (req, res) => {
   res.render('login/register_page');
 })
 
+app.post('/create_acc', (req, res) => {
+  let userData = {
+    fn: req.body.firstName,
+    ln: req.body.lastName,
+    citizenid: req.body.citizen,
+    phone: req.body.phone,
+    email: req.body.email,
+    room: req.body.roomNum,
+    checkIn: req.body.checkInDate,
+    type: req.body.rent,
+    uname: req.body.username,
+    pwd: req.body.cpwd,
+  };
+  console.log(userData);
+  create_account(userData);
+  res.redirect('/');
+});
+
 app.post('/login', require('./controllers/authController').loginUser);
 
 app.listen(3000, () => {
-  console.log("Server running at http://localhost:3000");
+  console.log(`Server running at http://localhost:${port}`);
 });
