@@ -13,125 +13,132 @@
     <%- include('../partials/landlordNav') %>
     <div class="container mt-nav">
         <p class="h1 text-center pt-5 mb-5">ข้อมูลการชำระเงิน</p>
+        
         <div class="d-flex align-items-center mb-4">
             <div class="input-group w-25 me-2">
                 <span class="input-group-text py-2">รอบเดือน</span>
-                <input type="month" class="form-control" value="2025-01">
+                <input type="month" class="form-control" value="<%=payments[0].month%>" onchange="changeMonth(this.value)">
             </div>
-            <button class="btn btn-primary py-2"><i class="fa-solid fa-magnifying-glass"></i> ตรวจสอบ</button>
         </div>
-        
-        <table class="table table-striped table-bordered text-center shadow-sm">
-            <thead class="table-dark">
-                <tr>
-                    <th>หมายเลขห้อง</th>
-                    <th>ผู้เช่า</th>
-                    <th>รายละเอียด</th>
-                    <th>สถานะการชำระเงิน</th>
-                    <th>ใบเสร็จ</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>101</td>
-                    <td>John Doe</td>
-                    <td>7700 บาท [ ค่าเช่า: 7000, ค่าไฟ: 500, ค่าน้ำ: 100, ค่าบริการอื่นๆ: 100 ]</td>
-                    <td class="text-success">ชำระเงินแล้ว</td>
-                    <td><a href="" data-bs-toggle="modal" data-bs-target="#showBill">ตรวจสอบ</a></td>
-                </tr>
-                <tr>
-                    <td>102</td>
-                    <td>ไม่มีผู้เช่า</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>103</td>
-                    <td>xxx xxx</td>
-                    <td>7700 บาท [ ค่าเช่า: 7000, ค่าไฟ: 500, ค่าน้ำ: 100, ค่าบริการอื่นๆ: 100 ]</td>
-                    <td class="text-success">ชำระเงินแล้ว</td>
-                    <td><a href="" data-bs-toggle="modal" data-bs-target="#showBill">ตรวจสอบ</a></td>
-                </tr>
-                <tr>
-                    <td>104</td>
-                    <td>yyy yyy</td>
-                    <td>7700 บาท [ ค่าเช่า: 7000, ค่าไฟ: 500, ค่าน้ำ: 100, ค่าบริการอื่นๆ: 100 ]</td>
-                    <td class="text-danger">ยังไม่ชำระ</td>
-                    <td><a href="" data-bs-toggle="modal" data-bs-target="#showBill">ตรวจสอบ</a></td>
-                </tr>
-                <tr>
-                    <td>105</td>
-                    <td>zzz zzz</td>
-                    <td>7700 บาท [ ค่าเช่า: 7000, ค่าไฟ: 500, ค่าน้ำ: 100, ค่าบริการอื่นๆ: 100 ]</td>
-                    <td class="text-primary">รอตรวจสอบ</td>
-                    <td><a href="" data-bs-toggle="modal" data-bs-target="#showBill">ตรวจสอบ</a></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="container p-5 my-4 border shadow-sm bg-white">
+        <% if(payments[0].notFound){ %>
+            <div class="alert alert-danger" role="alert">
+                ไม่พบข้อมูลการชำระเงินในเดือนนี้
+            </div>
+        <% } else{ %>
+            <table class="table table-striped table-bordered text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>หมายเลขห้อง</th>
+                        <th>ผู้เช่า</th>
+                        <th>รายละเอียด</th>
+                        <th>สถานะการชำระเงิน</th>
+                        <th>ใบเสร็จ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% payments.forEach((payment)=>{ %>
+                        <%
+                                let status;
+                                let color;
+                                if(payment.payment_status=="pending"){
+                                    status = "รอตรวจสอบ";
+                                    color = "warning";
+                                }else{
+                                    status = "ตรวจสอบแล้ว";
+                                    color = "success";
+                                }
+                        %>
+                        <tr>
+                            <td><%=payment.room_number%></td>
+                            <td><%=payment.first_name%> <%=payment.last_name%></td>
+                            <td><%=payment.rent+payment.elect_bill+payment.water_bill%> บาท [ ค่าเช่า: <%=payment.rent%>, ค่าไฟ: <%=payment.elect_bill%>, ค่าน้ำ: <%=payment.water_bill%>]</td>
+                            <td class="text-<%=color%>"><%=status%></td>
+                            <td><a href="" data-bs-toggle="modal" data-bs-target="#showBill-<%=payment.room_id%>" class="text-decoration-none"><i class="fa-solid fa-magnifying-glass"></i> ตรวจสอบ</a></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
     </div>
-
 
     <!-- showBill-->
-    <div class="modal fade" id="showBill">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">ใบเสร็จ ห้อง 105</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-5">
-                    <p class="h4">รายละเอียด</p>
-                    <div class="mt-4 mb-2">
-                        <p class="m-0">เลขที่: 12345</p>
-                        <p class="m-0">สถานะ: ชำระเงินแล้ว</p>
-                        <p class="m-0">ชำระโดย: John Doe</p>
-                        <p class="m-0">ชำระวันที่: 01/01/2025</p>
-                    </div>
-                    <table class="table table-bordered">
-                         <thead>
-                            <tr>
-                                <th>รายการ</th>
-                                <th>จำนวนเงิน</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>ค่าเช่าห้อง</td>
-                                <td>7000</td>
-                            </tr>
-                            <tr>
-                                <td>ค่าไฟ</td>
-                                <td>500</td>
-                            </tr>
-                            <tr>
-                                <td>ค่าน้ำ</td>
-                                <td>100</td>
-                            </tr>
-                            <tr>
-                                <td>ค่าบริการอื่นๆ</td>
-                                <td>100</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2"><b>รวม: 7700</b></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="d-flex flex-column">
-                        <p class="h4 my-4">หลักฐานการชำระเงิน</p>
-                        <div class="d-flex">
-                            <img class="w-50" src="https://thunder.in.th/wp-content/uploads/2024/06/%E0%B8%AA%E0%B8%A5%E0%B8%B4%E0%B8%9B%E0%B9%82%E0%B8%AD%E0%B8%99%E0%B9%80%E0%B8%87%E0%B8%B4%E0%B8%99.webp" class="rounded">
+        <% payments.forEach((payment)=>{ %>
+            <%
+                let status;
+                switch (payment.payment_status){
+                    case "pending":
+                        status="รอตรวจสอบ";
+                        break;
+                    case "verified":
+                        status="ตรวจสอบแล้ว";
+                        break;
+                }
+            %>
+            <div class="modal fade" id="showBill-<%=payment.room_id%>">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">ใบเสร็จ ห้อง <%=payment.room_number%></h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body p-5">
+                            <p class="h4">รายละเอียด</p>
+                            <div class="mt-4 mb-2">
+                                <p class="m-0">เลขที่: <%=payment.bill_id%></p>
+                                <p class="m-0">สถานะ: <%=status%></p>
+                                <p class="m-0">ชำระโดย: <%=payment.first_name%> <%=payment.last_name%></p>
+                                <p class="m-0">ชำระวันที่: <%=payment.payment_date%></p>
+                            </div>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>รายการ</th>
+                                        <th>จำนวนเงิน</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>ค่าเช่าห้อง</td>
+                                        <td><%=payment.rent%></td>
+                                    </tr>
+                                    <tr>
+                                        <td>ค่าไฟ</td>
+                                        <td><%=payment.elect_bill%></td>
+                                    </tr>
+                                    <tr>
+                                        <td>ค่าน้ำ</td>
+                                        <td><%=payment.water_bill%></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"><b>รวม: <%=payment.rent+payment.elect_bill+payment.water_bill%></b></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="d-flex flex-column">
+                                <p class="h4 my-4">หลักฐานการชำระเงิน</p>
+                                <div class="d-flex">
+                                    <img class="w-50" src="<%=payment.payment_slip%>" class="rounded">
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="modal-footer">
+                            <% if(status=="รอตรวจสอบ"){%>
+                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">ยืนยัน</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">ยกเลิก</button>
+                            <% }%>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">ออก</button>
                         </div>
                     </div>
-                    
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">ยืนยัน</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">ยกเลิก</button>
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">ออก</button>
                 </div>
             </div>
-        </div>
-    </div>
+        <% }); %>
+    <% } %>
+    <script>
+        function changeMonth(selectedMonth){
+            window.location.href = `/lesser/verify-payment?month=${selectedMonth}`;
+        }
+    </script>
 </body>
 </html>
