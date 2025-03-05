@@ -22,7 +22,7 @@ const loginUser = (req, res) => {
             }
             if (!match) {
                 console.log(match)
-                return res.status(400).json({ message: 'Invalid credentials' });
+                return res.status(400).json({ message: 'Password not match.' });
             }
 
             // ตั้งค่า ID ใน cookie หลังจาก login สำเร็จ
@@ -52,7 +52,7 @@ const createUser = (userData, res) => {
 
       console.log(rows[0].user_id)
 
-      const insertUsersInfo = ` INSERT INTO users_info (user_id, first_name, last_name, email, phone, room_number, date_sign) VALUES (?, ?, ?, ?, ?, ?, ?); `;
+      const insertUsersInfo = ` INSERT INTO users (user_id, first_name, last_name, email, phone, room_id, date_start) VALUES (?, ?, ?, ?, ?, ?, ?); `;
       loginService.updateData(insertUsersInfo, [rows[0].user_id, userData.fn, userData.ln, userData.email, userData.phone, userData.room, userData.checkIn], (err) => {
         if (err) {return console.log(err.message);}
 
