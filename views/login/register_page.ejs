@@ -4,37 +4,37 @@
     <!-- <div id="bg-layer"></div> -->
     <div id="form-layer" class="shadow-sm p-3 mb-5 bg-body rounded bg" style="margin: 70px; margin-left: 20%; margin-right: 20%;">
         <h1 style="text-align: center; font-weight: 900; margin-top: 40px; margin-bottom: 30px;">ลงทะเบียนบัญชีผู้ใช้</h1>
-        <form class="row g-3" style="width: 80%; margin-left: auto; margin-right: auto;">
+        <form class="row g-3" method="POST" action="/create_acc" style="width: 80%; margin-left: auto; margin-right: auto;">
             <h4 style="font-weight: 900;">1. ข้อมูลส่วนตัว</h4>
             <div class="col-md-6">
                 <label for="firstName" class="form-label">ชื่อ</label>
-                <input type="text" class="form-control" id="firstName">
+                <input type="text" class="form-control" name="firstName">
             </div>
             <div class="col-md-6">
                 <label for="lastName" class="form-label">นามสกุล</label>
-                <input type="text" class="form-control" id="lastName">
+                <input type="text" class="form-control" name="lastName">
             </div>
             <div>
                 <label for="citizen" class="form-label">หมายเลขบัตรประชาชน</label>
-                <input type="text" class="form-control" id="citizen">
+                <input type="text" class="form-control" name="citizen">
             </div>
             <div class="col-md-6">
               <label for="phone" class="form-label">เบอร์โทรศัพท์</label>
-              <input type="tel" class="form-control" id="phone">
+              <input type="tel" class="form-control" name="phone">
             </div>
             <div class="col-md-6">
               <label for="email" class="form-label">อีเมล</label>
-              <input type="email" class="form-control" id="email">
+              <input type="email" class="form-control" name="email">
             </div>
 
             <h4 style="font-weight: 900; margin-top: 40px;">2. ข้อมูลที่พัก</h4>
             <div style="width: 50%;">
                 <label for="roomNum" class="form-label">หมายเลขห้องพัก</label>
-                <input type="text" class="form-control" id="roomNum">
+                <input type="text" class="form-control" name="roomNum">
             </div>
             <div style="width: 50%;">
                 <label for="checkInDate" class="form-label">วันที่เข้าพัก</label>
-                <input type="date" class="form-control" id="checkInDate">
+                <input type="date" class="form-control" name="checkInDate">
             </div>
             <div class="col-md-6">
                 <p style="margin-bottom: 2px;">ประเภทสัญญาเช่า</p>
@@ -51,15 +51,15 @@
             <h4 style="font-weight: 900; margin-top: 40px;">3. ข้อมูลบัญชีผู้ใช้</h4>
             <div>
                 <label for="citizen" class="form-label">ชื่อผู้ใช้ (Username)</label>
-                <input type="text" class="form-control" id="citizen">
+                <input type="text" class="form-control" name="uname">
             </div>
             <div class="col-md-6">
               <label for="pwd" class="form-label">รหัสผ่าน</label>
-              <input type="password" class="form-control" id="pwd">
+              <input type="password" class="form-control" name="pwd1">
             </div>
             <div class="col-md-6">
               <label for="pwd" class="form-label">ยืนยันรหัสผ่าน</label>
-              <input type="password" class="form-control" id="pwd">
+              <input type="password" class="form-control" name="pwd2">
             </div>
 
             <div class="col-12" style="margin-top: 30px;">

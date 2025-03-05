@@ -4,8 +4,8 @@ const port = 3000;
 const sqlite = require('sqlite3').verbose();
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const { create_account } = require("./controllers/registerSys");
-const { createDiffieHellmanGroup } = require("crypto");
+const bcrypt = require('bcrypt');
+const authController = require('./controllers/authController');
 
 // creating the Express server
 const app = express();
@@ -38,8 +38,15 @@ app.get('/register', (req, res) => {
   res.render('login/register_page');
 })
 
+app.get('/logout', (req, res) => {
+  res.clearCookie("user_id");
+  return res.redirect('/log-in');
+})
+
 app.post('/create_acc', (req, res) => {
-  let userData = {
+  bcrypt.hash(req.body.pwd1, 10, (err, hash) => {
+    if (err) {return console.log(err.message);}
+    let userData = {
     fn: req.body.firstName,
     ln: req.body.lastName,
     citizenid: req.body.citizen,
@@ -48,15 +55,17 @@ app.post('/create_acc', (req, res) => {
     room: req.body.roomNum,
     checkIn: req.body.checkInDate,
     type: req.body.rent,
-    uname: req.body.username,
-    pwd: req.body.cpwd,
-  };
-  console.log(userData);
-  create_account(userData);
-  res.redirect('/');
+    uname: req.body.uname,
+    pwd: hash,
+    };
+
+    if (req.body.pwd1 != req.body.pwd2) {return res.send('Password not matched');}
+
+    authController.createUser(userData, res);
+  })
 });
 
-app.post('/login', require('./controllers/authController').loginUser);
+app.post('/login', authController.loginUser);
 
 app.listen(3000, () => {
   console.log(`Server running at http://localhost:${port}`);

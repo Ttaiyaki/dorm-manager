@@ -1,25 +1,19 @@
-const sqlite3 = require('sqlite3').verbose();
-const bcrypt = require('bcrypt');
+const sqlite = require('sqlite3').verbose();
 
-const db = new sqlite3.Database('dormitory.db');
+// connect to SQLite database
+let db = new sqlite.Database('dormitory.db', (err) =>{
+  if (err) {
+    return console.error(err.message);
+  };
+  console.log('Connected to the userAccount database.');
+});
 
-// ฟังก์ชันในการค้นหาผู้ใช้จากฐานข้อมูล
-const getUserByUsername = (username, callback) => {
-    db.get(`SELECT * FROM accounts WHERE user_name = ?`, [username], callback);
+const getData = (query, data, callback) => {
+  db.all(query, data, callback);
 };
 
-// const verifyPassword = (password, hashedPassword) => {
-//     return password == hashedPassword;
-// };
-
-
-// ฟังก์ชันในการตรวจสอบรหัสผ่าน โดยเทียบรหัสผ่านที่รับเข้ามา และรหัสที่ผ่านการ hash แล้ว
-const verifyPassword = (password, hashedPassword, callback) => {
-    // bcrypt.compare(password, hashedPassword, callback);
-    return password == hashedPassword;
+const updateData = (query, data, callback) => {
+  db.run(query, data, callback);
 };
 
-module.exports = {
-    getUserByUsername,
-    verifyPassword
-};
+module.exports = { getData, updateData };

@@ -10,6 +10,4 @@ const getUserByID = (id, callback) => {
 };
 
 
-module.exports = {
-    getUserByID
-};
+module.exports = { getUserByID };
