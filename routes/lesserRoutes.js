@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const sqlite3 = require('sqlite3').verbose();
 
-let db = new sqlite3.Database('test.db', (err) =>{
+let db = new sqlite3.Database('dormitory.db', (err) =>{
     if (err) {
       return console.error(err.message);
     };
@@ -14,12 +14,14 @@ router.get('/', (req, res) => {
 });
 
 router.get('/rooms', (req, res) => {
-    const query = ` SELECT  room_id, room_number, user_id,
+    const query = ` SELECT  room_id, room_number, user_id, user_status,
                             COUNT(CASE WHEN bill_status = 'unpaid' THEN 1 END) AS unpaid_bills,
                             COUNT(CASE WHEN payment_status = 'pending' THEN 1 END) AS pending_payments
                     FROM rooms
                     LEFT JOIN users
                     USING (room_id)
+                    LEFT JOIN accounts
+                    USING (user_id)
                     LEFT JOIN bills
                     USING (user_id)
                     LEFT JOIN payments
@@ -40,12 +42,14 @@ router.get('/rooms', (req, res) => {
 });
 
 router.get('/rooms/:id', (req, res) => {
-    const statusQuery = ` SELECT user_id,
+    const statusQuery = ` SELECT user_id, user_status,
                             COUNT(CASE WHEN bill_status = 'unpaid' THEN 1 END) AS unpaid_bills,
                             COUNT(CASE WHEN payment_status = 'pending' THEN 1 END) AS pending_payments
                           FROM rooms
                           LEFT JOIN users
                           USING (room_id)
+                          LEFT JOIN accounts
+                          USING (user_id)
                           LEFT JOIN bills
                           USING (user_id)
                           LEFT JOIN payments
@@ -86,6 +90,90 @@ router.get('/rooms/:id', (req, res) => {
         res.render('lesser/roomDetail', {room : room});
       });
     });
+});
+
+router.post('/update-room/:id', (req, res) => {
+  const room_id = req.params.id;
+  const { room_number, building, level, room_type, room_size, rent, elect_unit, water_unit} = req.body;
+  let facilities = req.body.facilities || [];
+  if (!Array.isArray(facilities)) {
+      facilities = [facilities];
+  }
+  const facilities_id = facilities.map(facility =>{
+    switch(facility){
+      case "air-conditioner":
+        return 1;
+      case "fan":
+        return 2;
+      case "water-heater":
+        return 3;
+      case "balcony":
+        return 4;
+      case "internet":
+        return 5;
+    }
+  })
+
+  const updateRoom = `UPDATE rooms
+                      SET room_number = '${room_number}', building = '${building}', floor = ${level}, type = '${room_type}',
+                          size = ${room_size}, rent = ${rent}, elect_per_unit = ${elect_unit}, water_per_unit = ${water_unit}
+                      WHERE room_id = ${room_id};`;
+  const deleteFacilities = `DELETE FROM room_facilities
+                            WHERE room_id = ${room_id};`;
+  let insertFacilities = `INSERT INTO room_facilities (room_id, facility_id) 
+                          VALUES`;
+
+  db.run(updateRoom, function(err) {
+      if (err) {
+        console.log(err.message);
+      }
+      db.run(deleteFacilities, function(err) {
+        if (err) {
+          console.log(err.message);
+        }
+        if(facilities_id.length>0){
+          for(let i=0; i<facilities_id.length-1; i++){
+            insertFacilities+=`(${room_id}, ${facilities_id[i]}), `
+          }
+          insertFacilities+=`(${room_id}, ${facilities_id[facilities_id.length-1]}); `
+          
+          db.run(insertFacilities, function(err) {
+            if (err) {
+              console.log(err.message);
+            }
+            res.redirect(`/lesser/rooms/${room_id}`);
+          });
+        }else{
+          res.redirect(`/lesser/rooms/${room_id}`);
+        }
+    });
+  });
+});
+
+router.post('/save-bill', (req, res) => {
+  const { user_id, month, due_date, rent, elect_bill, water_bill } = req.body;
+
+  const insertBill = `INSERT INTO bills (user_id, month, bill_status, rent, elect_bill, water_bill, due_date)
+                      VALUES (${user_id}, '${month}', 'unsend', ${rent}, ${elect_bill}, ${water_bill}, '${due_date}')`;
+
+  db.run(insertBill, function(err) {
+      if (err) {
+        console.log(err.message);
+      }
+      res.json({ success: true });
+  });
+});
+
+router.post('/save-meter', (req, res) => {
+  const { room_id, elect, water, meterMonth } = req.body;
+  const insertMeter = `INSERT INTO meters (room_id, meter_water, meter_elect, meter_month, updated_at)
+                      VALUES (${room_id}, ${water}, ${elect}, '${meterMonth}', CURRENT_TIMESTAMP)`;
+  db.run(insertMeter, function(err) {
+      if (err) {
+          return res.json({ success: false, message: err.message});
+      }
+      res.json({ success: true });
+  });
 });
 
 router.get('/get-meter', (req, res) => {
@@ -187,7 +275,7 @@ router.get('/user_img/:id', (req, res) => {
 
 const getRoomStatus = (room) => {
   let status;
-  if (!room.user_id) {
+  if (!room.user_id || room.user_status != "Verify") {
       status = 'ห้องว่าง';
   } else {
       if (room.pending_payments) {

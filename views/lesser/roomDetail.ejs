@@ -36,6 +36,26 @@
                 break;
         }
     %>
+
+
+    <!-- alert modal-->
+    <div class="modal fade" id="alert-modal">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header text-white" id="alert-header">
+                    <h4 class="modal-title" id="alert-title"></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body mx-4 my-2 text-center">
+                    <img src="" id="alert-icon" style="width: 20%;">
+                    <div class="py-4 h5" id="alert-message">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div class="container mt-nav">
         <p class="h1 text-center pt-5 mb-5">รายละเอียดห้องพัก</p>
         <div class="d-flex my-3 w-100 justify-content-between align-items-center">
@@ -78,10 +98,11 @@
                         <p class="h5 text-secondary">• ตึก <%=room.building%> • ชั้น <%=room.floor%></p>
                     </div>
                     <p class="text-secondary"><i class="fa-solid fa-tag"></i> รูปแบบห้อง: <%=room.type%> | ขนาด: <%=room.size%> ตร.ม.</p>
-                    <p class="h4 mt-5">ค่าเช่า: <%=room.rent%> บาท/เดือน</p>
-                    <div class="d-flex align-items-center">
-                        <p class="h6 me-5"><i class="fa-solid fa-bolt"></i> ค่าไฟ: <%=room.elect_per_unit%> บาท/หน่วย</p>
-                        <p class="h6 me-5"><i class="fa-solid fa-droplet"></i> ค่าน้ำ: <%=room.water_per_unit%> บาท/หน่วย</p>
+                    
+                    <div class="d-flex align-items-center flex-wrap">
+                        <p class="h4 mt-4 me-5">ค่าเช่า: <%=room.rent%> บาท/เดือน</p>
+                        <p class="h6 mt-4 me-5"><i class="fa-solid fa-bolt"></i> ค่าไฟ: <%=room.elect_per_unit%> บาท/หน่วย</p>
+                        <p class="h6 mt-4 me-5"><i class="fa-solid fa-droplet"></i> ค่าน้ำ: <%=room.water_per_unit%> บาท/หน่วย</p>
                     </div>
                 </div>
             </div>
@@ -102,7 +123,7 @@
                         <div class="card mb-3" style="max-width: 540px;">
                             <div class="row g-0">
                             <div class="col-md-5">
-                                <img src="/lesser/user_img/<%=room.user_id%>" class="img-fluid rounded-start">
+                                <img src="/lesser/user_img/<%=room.user_id%>" class="img-fluid rounded-start" style="object-fit: cover; height: 200px; width: 200px;">
                             </div>
                             <div class="col-md-7">
                                 <div class="card-body d-flex flex-column h-100">
@@ -127,16 +148,14 @@
                             <tr>
                                 <th class="p-3">ชื่อผู้เข้าพัก</th>
                                 <th class="p-3">วันที่ทำสัญญา</th>
-                                <th class="p-3">ระยะเวลาสัญญา</th>
                                 <th class="p-3">วันที่สิ้นสุดสัญญา</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="p-3"><%=room.first_name%> <%=room.last_name%></td>
-                                <td class="p-3"><%=room.rent_start_date%></td>
-                                <td class="p-3"><%=room.rent_duration%> เดือน</td>
-                                <td class="p-3"><%=room.rent_end_date%></td>
+                                <td class="p-3"><%=room.status=='ห้องว่าง' ? '-' : room.first_name%> <%=room.status=='ห้องว่าง' ? '' : room.last_name%></td>
+                                <td class="p-3"><%=room.status=='ห้องว่าง' ? '-' : room.date_start%></td>
+                                <td class="p-3"><%=room.status=='ห้องว่าง' ? '-' : room.date_end%></td>
                             </tr>
                         </tbody>
                     </table>
@@ -161,7 +180,7 @@
                     <p class="h4">รายละเอียด</p>
                     <div class="mt-3 mb-2">
                         <p class="mt-4">ห้อง: <%=room.room_number%></p>
-                        <p class="mt-4">ผู้เช่า: <%=room.first_name%> <%=room.last_name%></p>
+                        <p class="mt-4">ผู้เช่า: <%=room.status=='ห้องว่าง' ? '-' : room.first_name%> <%=room.status=='ห้องว่าง' ? '' : room.last_name%></p>
                         <div class="d-flex align-items-center mt-1">
                             <p class="m-0">รอบบิล: </p>
                             <input type="month" class="form-control w-25 ms-2" id="bill-month" onchange="showMeterData(this.value)">
@@ -199,7 +218,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><i class="fa-solid fa-floppy-disk"></i> บันทึก</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="saveBill()"><i class="fa-solid fa-floppy-disk"></i> บันทึก</button>
                 </div>
             </div>
         </div>
@@ -251,7 +270,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button>
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"><i class="fa-solid fa-floppy-disk"></i> บันทึก</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="saveMeter()"><i class="fa-solid fa-floppy-disk"></i> บันทึก</button>
                 </div>
             </div>
         </div>
@@ -263,100 +282,77 @@
 
     <!-- Edit Modal-->
     <div class="modal fade" id="edit">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-warning">
                     <h4 class="modal-title"><i class="fas fa-pen"></i> แก้ไขข้อมูล </h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body mx-4 my-2">
-                    <form action="">
-                        <label for="room-number" class="form-label">หมายเลขห้อง:</label>
-                        <input type="text" class="form-control" id="room-number" placeholder="หมายเลขห้อง" name="room-number" value="<%=room.room_number%>">
-                        <div class="row mt-2">
-                            <div class="col-sm-2">
-                                <label for="building" class="form-label">ตึก:</label>
-                                <input type="text" class="form-control" id="building" placeholder="ตึก" name="building" value="<%=room.building%>">
+                <form action="/lesser/update-room/<%=room.room_id%>" method="post">
+                    <div class="modal-body mx-4 my-2">
+                            <label for="room-number" class="form-label">หมายเลขห้อง:</label>
+                            <input type="text" class="form-control" id="room-number" placeholder="หมายเลขห้อง" name="room_number" value="<%=room.room_number%>">
+                            <div class="row mt-2">
+                                <div class="col-sm-2">
+                                    <label for="building" class="form-label">ตึก:</label>
+                                    <input type="text" class="form-control" id="building" placeholder="ตึก" name="building" value="<%=room.building%>">
+                                </div>
+                                <div class="col-sm-2">
+                                    <label for="level" class="form-label">ชั้น:</label>
+                                    <input type="text" class="form-control" id="level" placeholder="ชั้น" name="level" value="<%=room.floor%>">
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="room-type" class="form-label">รูปแบบห้อง:</label>
+                                    <input type="text" class="form-control" id="room-type" placeholder="รูปแบบห้อง" name="room_type" value="<%=room.type%>">
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="room-size" class="form-label">ขนาดห้อง (ตร.ม.):</label>
+                                    <input type="text" class="form-control" id="room-size" placeholder="ขนาดห้อง" name="room_size" value="<%=room.size%>">
+                                </div>
                             </div>
-                            <div class="col-sm-2">
-                                <label for="level" class="form-label">ชั้น:</label>
-                                <input type="text" class="form-control" id="level" placeholder="ชั้น" name="level" value="<%=room.floor%>">
-                            </div>
-                            <div class="col-sm-3">
-                                <label for="room-type" class="form-label">รูปแบบห้อง:</label>
-                                <input type="text" class="form-control" id="room-type" placeholder="รูปแบบห้อง" name="room-type" value="<%=room.type%>">
-                            </div>
-                            <div class="col-sm-4">
-                                <label for="room-size" class="form-label">ขนาดห้อง (ตร.ม.):</label>
-                                <input type="text" class="form-control" id="room-size" placeholder="ขนาดห้อง" name="room-size" value="<%=room.size%>">
-                            </div>
-                        </div>
 
-                        <label for="rent" class="form-label mt-5">ค่าเช่า (บาท/เดือน):</label>
-                        <input type="rent" class="form-control" id="rent" placeholder="ค่าเช่า" name="rent" value="<%=room.rent%>">
-                        <div class="row mt-3">
-                            <div class="col-4">
-                                <label for="elect-unit" class="form-label">ค่าไฟต่อหน่วย (บาท/หน่วย):</label>
-                                <input type="text" class="form-control" id="elect-unit" placeholder="ค่าไฟต่อหน่วย" name="elect-unit" value="<%=room.elect_per_unit%>">
+                            <label for="rent" class="form-label mt-5">ค่าเช่า (บาท/เดือน):</label>
+                            <input type="rent" class="form-control" id="rent" placeholder="ค่าเช่า" name="rent" value="<%=room.rent%>">
+                            <div class="row mt-3">
+                                <div class="col-4">
+                                    <label for="elect-unit" class="form-label">ค่าไฟต่อหน่วย (บาท/หน่วย):</label>
+                                    <input type="text" class="form-control" id="elect-unit" placeholder="ค่าไฟต่อหน่วย" name="elect_unit" value="<%=room.elect_per_unit%>">
+                                </div>
+                                <div class="col-4">
+                                    <label for="water-unit" class="form-label">ค่าน้ำต่อหน่วย (บาท/หน่วย):</label>
+                                    <input type="text" class="form-control" id="water-unit" placeholder="ค่าน้ำต่อหน่วย" name="water_unit" value="<%=room.water_per_unit%>">
+                                </div>
                             </div>
-                            <div class="col-4">
-                                <label for="water-unit" class="form-label">ค่าน้ำต่อหน่วย (บาท/หน่วย):</label>
-                                <input type="text" class="form-control" id="water-unit" placeholder="ค่าน้ำต่อหน่วย" name="water-unit" value="<%=room.water_per_unit%>">
-                            </div>
-                        </div>
 
-                        <label for="rent" class="form-label mt-5">สิ่งอำนวยความสะดวก:</label>
-                        <div class="d-flex flex-wrap gap-5">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="air-conditioner" name="air-conditioner" value="air-conditioner" <%=room.facilities.includes('air-conditioner') ? 'checked' : ''%> >
-                                <label class="form-check-label" for="air-conditioner">เครื่องปรับอากาศ</label>
+                            <label for="rent" class="form-label mt-5">สิ่งอำนวยความสะดวก:</label>
+                            <div class="d-flex flex-wrap gap-5 mb-5">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="air-conditioner" name="facilities" value="air-conditioner" <%=room.facilities.includes('air-conditioner') ? 'checked' : ''%> >
+                                    <label class="form-check-label" for="air-conditioner">เครื่องปรับอากาศ</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="fan" name="facilities" value="fan" <%=room.facilities.includes('fan') ? 'checked' : ''%>>
+                                    <label class="form-check-label" for="fan">พัดลม</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="water-heater" name="facilities" value="water-heater" <%=room.facilities.includes('water-heater') ? 'checked' : ''%>>
+                                    <label class="form-check-label" for="water-heater">เครื่องทำน้ำอุ่น</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="balcony" name="facilities" value="balcony" <%=room.facilities.includes('balcony') ? 'checked' : ''%>>
+                                    <label class="form-check-label" for="balcony">ระเบียง</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="internet" name="facilities" value="internet" <%=room.facilities.includes('internet') ? 'checked' : ''%>>
+                                    <label class="form-check-label" for="internet">อินเทอร์เน็ต</label>
+                                </div>
                             </div>
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="fan" name="fan" value="fan" <%=room.facilities.includes('fan') ? 'checked' : ''%>>
-                                <label class="form-check-label" for="fan">พัดลม</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="water-heater" name="water-heater" value="water-heater" <%=room.facilities.includes('water-heater') ? 'checked' : ''%>>
-                                <label class="form-check-label" for="water-heater">เครื่องทำน้ำอุ่น</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="balcony" name="balcony" value="balcony" <%=room.facilities.includes('balcony') ? 'checked' : ''%>>
-                                <label class="form-check-label" for="balcony">ระเบียง</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="internet" name="internet" value="internet" <%=room.facilities.includes('internet') ? 'checked' : ''%>>
-                                <label class="form-check-label" for="internet">อินเทอร์เน็ต</label>
-                            </div>
-                        </div>
-
-                        <label class="form-label mt-5" for="renter">ผู้เช่า:</label>
-                        <select class="form-select w-50" id="renter" name="renter">
-                            <option value="none">ไม่มีผู้เช่า</option>
-                            <% if(room.user_id){%>
-                                <option value="<%=room.user_id%>" selected><%=room.first_name%> <%=room.last_name%></option>
-                            <% } %>
-                        </select>
-                        <div class="row mt-3">
-                            <div class="col-4">
-                                <label for="contract-date" class="form-label">วันที่ทำสัญญา:</label>
-                                <input type="date" class="form-control" id="contract-date" placeholder="วันที่ทำสัญญา" name="contract-date" value="<%=room.rent_start_date%>">
-                            </div>
-                            <div class="col-4">
-                                <label for="contract-term" class="form-label">ระยะเวลาสัญญา(เดือน):</label>
-                                <input type="text" class="form-control" id="contract-term" placeholder="ระยะเวลาสัญญา" name="contract-term" value="<%=room.rent_duration%>">
-                            </div>
-                            <div class="col-4">
-                                <label for="contract-end" class="form-label">วันที่สิ้นสุดสัญญา:</label>
-                                <input type="date" class="form-control" id="contract-end" placeholder="วันที่สิ้นสุดสัญญา" name="contract-end" value="<%=room.rent_end_date%>">
-                            </div>
-                        </div>
-                        
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button>
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"><i class="fa-solid fa-floppy-disk"></i> บันทึก</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button>
+                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal"><i class="fa-solid fa-floppy-disk"></i> บันทึก</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -384,8 +380,92 @@
 
 
     <script>
+        function saveBill() {
+            if ("<%=room.status%>"=="ห้องว่าง") {
+                showAlert(false, "ไม่สามารถบันทึกบิลสำหรับห้องที่ไม่มีผู้เช่าได้!");
+                return;
+            }
+
+            const month = document.getElementById("bill-month").value;
+            const due_date = document.getElementById("pay-duedate").value;
+            const elect_bill = document.getElementById("elect-bill").textContent;
+            const water_bill = document.getElementById("water-bill").textContent;
+
+            if (!month || !due_date || elect_bill === "-" || water_bill === "-" || new Date(due_date) < new Date()) {
+                showAlert(false, "กรุณากรอกรอบบิลและวันครบกำหนดชำระให้ถูกต้อง!");
+                return;
+            }
+
+            fetch("/lesser/save-bill", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(
+                    {
+                        user_id: "<%=room.user_id%>",
+                        month: month,
+                        due_date: due_date,
+                        rent: "<%=room.rent%>",
+                        elect_bill: elect_bill,
+                        water_bill: water_bill
+                    }
+                )
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.success, "บันทึกบิลสำเร็จ!");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    showAlert(data.success, data.message);
+                }
+            })
+            .catch(error => console.error("Error saving bill:", error));
+        }
+
+        function saveMeter() {
+            const meterMonth = document.getElementById("meterMonth").value;
+            const elect = document.getElementById("elect").value;
+            const water = document.getElementById("water").value;
+
+            if (meterMonth<="<%=room.meter_month%>") {
+                showAlert(false, "กรุณากรอกรอบเดือนให้ถูกต้อง!");
+                return;
+            }
+            if (document.getElementById("cal-elect-unit").textContent < 0 || document.getElementById("cal-water-unit").textContent < 0){
+                showAlert(false, "กรุณากรอกเลขมิเตอร์ให้ถูกต้อง!");
+                return;
+            }
+
+            fetch("/lesser/save-meter", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(
+                    {
+                        room_id: "<%=room.room_id%>",
+                        meterMonth: meterMonth,
+                        elect: elect,
+                        water: water
+                    }
+                )
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.success, "บันทึกค่าน้ำ-ค่าไฟสำเร็จ!");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    showAlert(data.success, data.message);
+                }
+            })
+            .catch(error => console.error("Error saving meter:", error));
+        }
+
+
         function showMeterData(selectedMonth){
-            console.log("test");
             fetch(`/lesser/get-meter?month=${selectedMonth}&room_id=<%=room.room_id%>`)
                 .then(response => response.json())
                 .then(data => {
@@ -424,6 +504,23 @@
                     document.getElementById("cal-water-unit").innerHTML = val-"<%=room.meter_water%>";
                     break;
             }
+        }
+
+        function showAlert(success, message) {
+            document.getElementById("alert-header").classList.remove('bg-danger', 'bg-success');
+            if(success){
+                document.getElementById("alert-title").textContent = "สำเร็จ";
+                document.getElementById("alert-icon").src = "/image/success-icon.png";
+                document.getElementById("alert-header").classList.add('bg-success');
+            }else{
+                document.getElementById("alert-title").textContent = "ไม่สำเร็จ";
+                document.getElementById("alert-icon").src = "/image/fail-icon.png";
+                document.getElementById("alert-header").classList.add('bg-danger');
+            }
+            document.getElementById("alert-message").textContent = message;
+            
+            let alertModal = new bootstrap.Modal(document.getElementById('alert-modal'));
+            alertModal.show();
         }
     </script>
 </body>
