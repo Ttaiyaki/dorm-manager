@@ -1,6 +1,7 @@
 <%- include('../partials/head') %>
 <body>
     <%- include('../partials/navforlog') %>
+    <%- include('../partials/popup') %>
     <div id="overlay">
         <div class="overlay-content" style="justify-items: center; margin: 40px;">
             <h1>ลืมรหัสผ่าน?</h1>
@@ -30,11 +31,11 @@
             <h1 style="text-align: center; font-weight: 900; margin-top: 40px; margin-bottom: 30px;">เข้าสู่ระบบ</h1>
             <form action="/login" method="POST" style="width: 50%;">
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="user_name" name="user_name">
+                    <input type="text" class="form-control" id="user_name" name="user_name" required>
                     <label for="floatingInput">ชื่อผู้ใช้/อีเมล</label>
                 </div>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="user_password" name="user_password">
+                    <input type="password" class="form-control" id="user_password" name="user_password" required>
                     <label for="floatingPassword">รหัสผ่าน</label>
                 </div>
                 <a href="#" style="float: right;" role="button" onclick="on()">ลืมรหัสผ่าน?</a>
