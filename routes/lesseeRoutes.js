@@ -4,8 +4,14 @@ const router = express.Router();
 const lesseeService = require('../services/lesseeService')
 
 router.get('/', (req, res) => {
-    if (!req.cookies.user_id) {return res.redirect('/log-in');}
-    lesseeService.getUserByID(req.cookies.user_id, (err, user) => {
+    console.log(req.cookies.user);
+    if (!req.cookies.user) {
+        res.clearCookie('user');
+        req.session.popup = "not login"
+        return res.redirect('/log-in');
+    }
+    if (req.cookies.user.user_status != "Verify") {return res.send("User's not verified.");}
+    lesseeService.getUserByID(req.cookies.user.user_id, (err, user) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
@@ -15,9 +21,9 @@ router.get('/', (req, res) => {
 });
 
 router.get('/profile', (req, res) => {
-    if (!req.cookies.user_id) {return res.redirect('/log-in');}
+    if (!req.cookies.user) {return res.redirect('/log-in');}
     console.log(req.cookies);
-    lesseeService.getUserByID(req.cookies.user_id, (err, user) => {
+    lesseeService.getUserByID(req.cookies.user.user_id, (err, user) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
@@ -28,7 +34,7 @@ router.get('/profile', (req, res) => {
 });
 
 router.get('/profile/edit', (req, res) => {
-    if (!req.cookies.user_id) {return res.redirect('/log-in');}
+    if (!req.cookies.user) {return res.redirect('/log-in');}
     res.render('lessee/profile-edit');
 });
 
