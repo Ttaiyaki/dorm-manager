@@ -5,22 +5,29 @@
     <div id="overlay">
         <div class="overlay-content" style="justify-items: center; margin: 40px;">
             <h1>ลืมรหัสผ่าน?</h1>
-            <form action="/resetPwd" method="get" style="width: 70%;">
+            <form action="/resetPwd" method="POST" style="width: 70%;">
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="roomNum" placeholder="name@example.com">
+                    <input type="text" class="form-control" id="room_number" name="room_number" required>
                     <label for="floatingInput">หมายเลขห้อง</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="email" class="form-control" id="email" placeholder="name@example.com">
+                    <input type="email" class="form-control" id="email" name="email" required>
                     <label for="floatingInput">อีเมล</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="pwd" placeholder="name@example.com">
+                    <input type="password" class="form-control" id="pwd1" name="pwd1" required>
                     <label for="floatingInput">รหัสผ่านใหม่</label>
                 </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="pwd2" name="pwd2" required onkeyup="checkMatch()">
+                    <label for="floatingInput">รหัสผ่านใหม่</label>
+                </div>
+                <span id="message" style="color: red;"></span> <br><br>
+
+                <button type="submit" class="btn btn-success">เปลี่ยนรหัสผ่าน</button>
+                <button class="btn btn-danger" onclick="off()">ปิดหน้าต่าง</button>
             </form>
-            <button type="submit" class="btn btn-success">เปลี่ยนรหัสผ่าน</button>
-            <button class="btn btn-danger" onclick="off()">ปิดหน้าต่าง</button>
+            
         </div>
     </div>
     <div class="land-grid">
@@ -66,6 +73,20 @@
                 off();
             }
         });
+
+        function checkMatch() {
+            let password = document.getElementById("pwd1").value;
+            let confirmPassword = document.getElementById("pwd2").value;
+            let message = document.getElementById("message");
+
+            if (password === confirmPassword) {
+                message.style.color = "green";
+                message.textContent = "รหัสผ่านตรงกัน ✅";
+            } else {
+                message.style.color = "red";
+                message.textContent = "รหัสผ่านไม่ตรงกัน ❌";
+            }
+        }
     </script>
 </body>
 <%- include('../partials/footer') %>
