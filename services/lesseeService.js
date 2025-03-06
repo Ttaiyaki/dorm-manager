@@ -24,6 +24,12 @@ const savePaymentSlip = (billID, fileBuffer, callback) => {
     });
 };
 
+const getData = (query, data, callback) => {
+  db.all(query, data, callback);
+};
 
+const updateData = (query, data, callback) => {
+  db.run(query, data, callback);
+};
 
-module.exports = { getUserByID, savePaymentSlip };
+module.exports = { getUserByID, savePaymentSlip, getData, updateData };
