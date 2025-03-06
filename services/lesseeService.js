@@ -9,5 +9,21 @@ const getUserByID = (id, callback) => {
             WHERE user_id = ?;`, [id], callback);
 };
 
+const savePaymentSlip = (billID, fileBuffer, callback) => {
+    const paymentStatus = 'pending';
+    const paymentDate = new Date().toISOString();
+    const query = `INSERT INTO payments (bill_id, payment_slip, payment_status, payment_date) 
+                   VALUES (?, ?, ?, ?)`;
 
-module.exports = { getUserByID };
+    db.run(query, [billID, fileBuffer, paymentStatus, paymentDate], function (err) {
+        if (err) {
+            console.log('Error saving payment slip to database:', err);
+            return callback(err);
+        }
+        callback(null, { lastID: this.lastID });
+    });
+};
+
+
+
+module.exports = { getUserByID, savePaymentSlip };
