@@ -1,0 +1,71 @@
+<%- include('../partials/head') %>
+<body>
+    <%- include('../partials/nav') %>
+    <script>
+        function goBack() {
+            if (document.referrer) {
+                window.history.back(); // ถ้ามีหน้าก่อนหน้า → ให้ย้อนกลับ
+            } else {
+                window.location.href = '/home'; // ถ้าไม่มีหน้าก่อนหน้า → ไปหน้าหลัก
+            }
+        }
+
+        function payment() {
+            document.getElementById("")
+        }
+    </script>
+
+    <div class="position-relative text-center" style="margin-top: 60px; margin-left: 50px; margin-bottom: 20px;">
+        <button type="button" class="btn position-absolute start-0 ms-3" onclick="goBack()">
+            <i class="bi bi-arrow-left-circle fa-2x"></i>
+        </button>
+        <h1 class="fw-bold">ประวัติการชำระค่าเช่า</h1>
+    </div>
+
+    <div class="card shadow-sm mt-0" style="margin: 50px; padding: 40px;">
+        <table class="table table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th>เดือนที่ชำระ</th>
+                    <th>วันที่ชำระ</th>
+                    <th>จำนวนเงิน</th>
+                    <th>สถานะ</th>
+                    <th>รายละเอียด</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- use db -->
+                <tr>
+                    <td>มกราคม</td>
+                    <td>01-01-2000</td>
+                    <td>1000</td>
+                    <td>ชำระแล้ว</td>
+                    <td>
+                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#payment-slip">
+                            <i class="bi bi-file-text"></i> ใบเสร็จ
+                        </button>
+
+                        <div class="modal fade" id="payment-slip" tabindex="-1" role="dialog" aria-labelledby="payment-slip-label" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content" style="width: 150%;">
+                                    <div class="modal-header">
+                                        <h2 class="modal-title" style="font-weight: 700;" id="payment-slip-label">รายละเอียดใบเสร็จ</h2>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                        </button>
+                                    </div>
+                                    <div class="modal-body p-5 pt-3">
+                                        <%- include('../lessee/payment-bill')%>
+                                        <h4  style="font-weight: 600; padding-top: 20px;">หลักฐานการชำระเงิน</h4>
+                                        <!-- payment image from db -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+<%- include('../partials/footer') %>
+</html>
