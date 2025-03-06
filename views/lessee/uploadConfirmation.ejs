@@ -1,0 +1,25 @@
+<%- include('../partials/head') %>
+<body>
+    <%- include('../partials/nav') %>
+    <main class="d-flex align-items-center flex-column">
+
+        <div class="container mt-5">
+            <div class="card shadow-sm p-4">
+                <a href="/lessee" class="btn btn-primary btn-back" style="width: 10%;">< ย้อนกลับ</a>
+                <div class="text-center">
+                    <img src="/image/log-in.png" class="img-fluid mb-3" style="width: 35%;">
+                    <p class="amount-text">ยอดชำระค่าบริการทั้งหมด 0 บาท</p>
+                </div>
+                <form action="/lessee/upload" method="POST" enctype="multipart/form-data">
+                    <label class="form-label">อัปโหลดสลิปชำระเงิน</label>
+                    <input type="file" name="payment_slip" class="form-control" required>
+                    
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn btn-primary">ยืนยันการชำระเงิน</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
