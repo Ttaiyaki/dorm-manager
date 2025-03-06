@@ -43,9 +43,13 @@
                         <i class="bi bi-clock-history"></i> ประวัติการชำระค่าเช่า
                     </button>
                 </div>
-                <h2 class="mt-4" style="text-align: center; font-weight: 900;">ใบแจ้งค่าเช่า</h2>
-                <%- include('../lessee/payment-bill')%>
-                <p class="h6 text-danger">*** ชำระเงินภายในวันที่ </p>
+
+                <% if (bill && bill.length > 0) { %>
+                    <%- include('../lessee/payment-bill') %>
+                <% } else { %>
+                    <h2 class="mt-4" style="text-align: center; font-weight: 900;">ไม่มีรายการค่าชำระบริการ</h2>
+                <% } %>
+                
                 <div style="justify-self: center; margin-top: 30px;">
                     <button class="btn btn-primary text-nowrap" style="height: 3rem; align-self: center;" onclick="window.location.href='/lessee/uploadConfirmation';">ชำระค่าเช่า</button>
                 </div>
