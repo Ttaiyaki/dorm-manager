@@ -16,7 +16,7 @@
         
         <div class="d-flex align-items-center mb-4">
             <div class="input-group w-25 me-2">
-                <span class="input-group-text py-2">รอบเดือน</span>
+                <span class="input-group-text py-2 bg-dark text-light">รอบเดือน</span>
                 <input type="month" class="form-control" value="<%=payments[0].month%>" onchange="changeMonth(this.value)">
             </div>
         </div>
@@ -41,12 +41,19 @@
                         <%
                                 let status;
                                 let color;
-                                if(payment.payment_status=="pending"){
-                                    status = "รอตรวจสอบ";
-                                    color = "warning";
-                                }else{
-                                    status = "ตรวจสอบแล้ว";
-                                    color = "success";
+                                switch (payment.payment_status){
+                                    case "pending":
+                                        status="รอตรวจสอบ";
+                                        color = "warning";
+                                        break;
+                                    case "verified":
+                                        status="ตรวจสอบแล้ว";
+                                        color = "success";
+                                        break;
+                                    case "rejected":
+                                        status="ปฏิเสธ";
+                                        color = "danger";
+                                        break;
                                 }
                         %>
                         <tr>
@@ -72,6 +79,9 @@
                         break;
                     case "verified":
                         status="ตรวจสอบแล้ว";
+                        break;
+                    case "rejected":
+                        status="ปฏิเสธ";
                         break;
                 }
             %>
@@ -125,8 +135,8 @@
                         </div>
                         <div class="modal-footer">
                             <% if(status=="รอตรวจสอบ"){%>
-                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">ยืนยัน</button>
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">ยกเลิก</button>
+                                <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="updatePaymentStatus('<%=payment.payment_id%>', '<%=payment.bill_id%>', true)">อนุมัติ</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="updatePaymentStatus('<%=payment.payment_id%>', '<%=payment.bill_id%>', false)">ปฏิเสธ</button>
                             <% }%>
                             <button type="button" class="btn btn-light" data-bs-dismiss="modal">ออก</button>
                         </div>
@@ -138,6 +148,32 @@
     <script>
         function changeMonth(selectedMonth){
             window.location.href = `/lesser/verify-payment?month=${selectedMonth}`;
+        }
+        function updatePaymentStatus(payment_id, bill_id, approved) {
+            fetch("/lesser/update-payment", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(
+                    {
+                        payment_id: payment_id,
+                        bill_id: bill_id,
+                        approved: approved
+                    }
+                )
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                    // showAlert(data.success, "ลบผู้เช่าออกจากห้องนี้แล้ว!");
+                    // setTimeout(() => {
+                    //     location.reload();
+                    // }, 1000);
+                } else {
+                    // showAlert(data.success, data.message);
+                }
+            })
+            .catch(error => console.error("Error saving meter:", error));
         }
     </script>
 </body>
