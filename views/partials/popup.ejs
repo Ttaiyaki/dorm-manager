@@ -100,7 +100,7 @@
 <% if (popup==="reset page's update success") { %>
     <div class="d-flex justify-content-center m-5 card-img-overlay" style="max-height: 13%; color: green;">
         <div class="toast toast-demo fade show" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header bg-danger text-white">
+            <div class="toast-header bg-success text-white">
             <strong class="me-auto">แจ้งเตือน</strong>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
@@ -139,10 +139,38 @@
     </div>
 <% } %>
 
+<% if (popup==="user not verify") { %>
+    <div class="d-flex justify-content-center m-5 card-img-overlay" style="max-height: 13%; color: red;">
+        <div class="toast toast-demo fade show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-danger text-white">
+            <strong class="me-auto">แจ้งเตือน</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                ผู้เช่ายังไม่ได้รับการยืนยันจากผู้ให้เช่า
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<% if (popup==="not lessee") { %>
+    <div class="d-flex justify-content-center m-5 card-img-overlay" style="max-height: 13%; color: red;">
+        <div class="toast toast-demo fade show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-danger text-white">
+            <strong class="me-auto">แจ้งเตือน</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                ขออภัย เนื่องจากไม่มีข้อมูลผู้เช่า ของผู้ให้เช่าในระบบ
+            </div>
+        </div>
+    </div>
+<% } %>
+
 <% if (popup==="create user success") { %>
     <div class="d-flex justify-content-center m-5 card-img-overlay" style="max-height: 13%; color: green;">
         <div class="toast toast-demo fade show" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header bg-danger text-white">
+            <div class="toast-header bg-success text-white">
             <strong class="me-auto">แจ้งเตือน</strong>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
@@ -152,3 +180,4 @@
         </div>
     </div>
 <% } %>
+

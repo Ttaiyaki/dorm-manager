@@ -54,7 +54,11 @@
                                         </button>
                                     </div>
                                     <div class="modal-body p-5 pt-3">
-                                        <%- include('../lessee/payment-bill')%>
+
+                                        <% if (typeof bill !== "undefined" && bill.length > 0) { %>
+                                            <%- include('../lessee/payment-bill') %>
+                                        <% } %>
+
                                         <h4  style="font-weight: 600; padding-top: 20px;">หลักฐานการชำระเงิน</h4>
                                         <!-- payment image from db -->
                                     </div>

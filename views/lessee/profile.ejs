@@ -13,7 +13,7 @@
                 <div class="m-3 mt-0 text-center">
                     <br>
                     <img alt="Profile Picture" class="rounded-circle img-fluid" width="60%" src="../image/defaultProfile.jpg">
-                    <h3 style="margin-top: 20px;"><strong>Username</strong></h3>
+                    <h3 style="margin-top: 20px;"><strong><%=user.user_name%></strong></h3>
                     <button type="button" onclick="window.location.href = '/lessee/profile/edit'" class="btn btn-outline-dark" style="margin-bottom: 30px;"><i class="bi bi-pencil-square"></i> แก้ไขข้อมูล</button>
                 </div>
             </div>
@@ -26,9 +26,9 @@
                 <hr class="mt-0">
                 <div class="mb-4" style="padding-left: 30px;">
                     <!-- db ชื่อ, อายุ, เบอร์โทร -->
-                    <p style="font-size: 1.2rem;"><strong>ชื่อ :</strong> John Doe</p>
-                    <p style="font-size: 1.2rem;"><strong>อีเมล์ :</strong> hahaha@gmail.com</p>
-                    <p style="font-size: 1.2rem;"><strong>เบอร์โทร :</strong> 081-234-5678</p>
+                    <p style="font-size: 1.2rem;"><strong>ชื่อ :</strong> <%=user.first_name%> <%=user.last_name%></p>
+                    <p style="font-size: 1.2rem;"><strong>อีเมล์ :</strong> <%=user.email%></p>
+                    <p style="font-size: 1.2rem;"><strong>เบอร์โทร :</strong> <%=user.phone%></p>
                 </div>
 
                 <h2><strong>ข้อมูลห้องพัก</strong></h2>
@@ -36,11 +36,11 @@
                 <div class="mb-5" style="padding-left: 30px;">
                     <!-- db เลขที่ห้อง, ค่าเช่า, ที่อยู่ -->
                     <div class="row">
-                        <p class="col" style="font-size: 1.2rem;"><strong>วันที่ทำสัญญา :</strong> </p>
-                        <p class="col" style="font-size: 1.2rem;"><strong>วันที่หมดสัญญา :</strong> </p>
+                        <p class="col" style="font-size: 1.2rem;"><strong>วันที่ทำสัญญา : </strong> <%=user.date_start%></p>
+                        <p class="col" style="font-size: 1.2rem;"><strong>วันที่หมดสัญญา :</strong> <%=user.date_end%></p>
                     </div>
-                    <p style="font-size: 1.2rem;"><strong>เลขที่ห้อง :</strong> A101</p>
-                    <p style="font-size: 1.2rem;"><strong>ที่อยู่ :</strong> ตึก A ชั้น 1</p>
+                    <p style="font-size: 1.2rem;"><strong>เลขที่ห้อง :</strong> <%=room.room_number%></p>
+                    <p style="font-size: 1.2rem;"><strong>ที่อยู่ :</strong> ตึก <%=room.building%> ชั้น <%=room.floor%></p>
                 </div>
             </div>
         </div>

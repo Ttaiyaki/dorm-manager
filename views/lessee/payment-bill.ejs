@@ -6,7 +6,7 @@
     <p class="col-5"><span style="font-weight: 700;">เลขที่ห้อง</span> <%=room[0].room_number%></p>
 </div>
 <div class="row ml-2" style="margin-left: 5px;">
-    <p class="col pl-1"><span style="font-weight: 700;">ประจำเดือน</span> มกราคม</p>
+    <p class="col pl-1"><span style="font-weight: 700;">ประจำเดือน</span> <%=bill[0].month%></p>
 </div>
 
 <table class="table table-bordered">
@@ -28,27 +28,21 @@
         </tr>
         <tr style="text-align: center;">
             <td style="text-align: left;">ค่าไฟ</td>
-            <td style="text-align: center;"></td>
-            <td>7</td>
-            <td></td>
+            <td style="text-align: center;"><%=meter[0].meter_elect%></td>
+            <td><%=room[0].elect_per_unit%></td>
+            <td><%=bill[0].elect_bill%></td>
         </tr>
         <tr style="text-align: center;">
             <td style="text-align: left;">ค่าน้ำ</td>
-            <td ></td>
-            <td>18</td>
-            <td></td>
-        </tr>
-        <tr style="text-align: center;">
-            <td style="text-align: left;">ค่าบริการอื่นๆ</td>
-            <td>1</td>
-            <td>100</td>
-            <td>100</td>
+            <td><%=meter[0].meter_water%></td>
+            <td><%=room[0].water_per_unit%></td>
+            <td><%=bill[0].water_bill%></td>
         </tr>
         <tr style="text-align: center;">
             <td colspan="3" style="font-weight: 700;">รวม</td>
-            <td>100</td>
+            <td><%=bill[0].total%></td>
         </tr>
     </tbody>
 </table>
 
-<p class="h6 text-danger">*** ชำระเงินภายในวันที่ </p>
+<p class="h6 text-danger">*** ชำระเงินภายในวันที่ <%=bill[0].due_date%></p>

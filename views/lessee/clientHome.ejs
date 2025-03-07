@@ -7,29 +7,40 @@
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <!-- use db -->
-                    <p class="h3" style="font-weight: 700;">หมายเลขห้อง A101</p>
-                    <p class="h5 text-secondary">• ตึก A • ชั้น 1</p>
+                    <p class="h3" style="font-weight: 700;">หมายเลขห้อง <%=room[0].room_number%></p>
+                    <p class="h5 text-secondary">• ตึก <%=room[0].building%> • ชั้น <%=room[0].floor%></p>
                 </div>
-                <p class="text-secondary"><i class="fa-solid fa-tag"></i> รูปแบบห้อง: Studio | ขนาด: 25 ตร.ม.</p>
+                <p class="text-secondary"><i class="fa-solid fa-tag"></i> รูปแบบห้อง: <%=room[0].type%> | ขนาด: <%=room[0].size%> ตร.ม.</p>
                 <img class="mw-100 rounded card-img" style="width: 90%;" alt="room101-picture" src="https://www.grandecentrepointpattaya.com/upload/rooms-and-suites/2-rooms-and-suites.jpg?v=66">
 
                 <!-- use db -->
                 <div class="row border-top my-5"></div>
-                <p class="h4 mt-5">ค่าเช่าห้อง 7000 บาทต่อเดือน</p>
+                <p class="h4 mt-5">ค่าเช่าห้อง <%=room[0].rent%> บาทต่อเดือน</p>
                 <div class="align-items-center">
-                    <p class="h6 text-secondary"><i class="fa-solid fa-bolt"></i> ค่าไฟ 7 บาทต่อหน่วย</p>
-                    <p class="h6 text-secondary"><i class="fa-solid fa-droplet"></i> ค่าน้ำ 18 บาทต่อหน่วย</p>
-                    <p class="h6  text-secondary"><i class="fa-solid fa-money-bill"></i> ค่าบริการอื่นๆ 100 บาทต่อเดือน</p>
+                    <p class="h6 text-secondary"><i class="fa-solid fa-bolt"></i> ค่าไฟ <%=room[0].elect_per_unit%> บาทต่อหน่วย</p>
+                    <p class="h6 text-secondary"><i class="fa-solid fa-droplet"></i> ค่าน้ำ <%=room[0].water_per_unit%> บาทต่อหน่วย</p>
                 </div>
 
                 <div class="row border-top my-5 pt-4">
                     <p class="h4 my-4">สิ่งอำนวยความสะดวก</p>
                     <div class="d-flex flex-wrap align-items-center">
-                        <p class="me-5 text-secondary"><i class="fi fi-ss-air-conditioner"></i> เครื่องปรับอากาศ</p>
-                        <p class="me-5 text-secondary"><i class="fa-solid fa-fan"></i> พัดลม</p>
-                        <p class="me-5 text-secondary"><i class="fa-solid fa-water"></i> เครื่องทำน้ำอุ่น</p>
-                        <p class="me-5 text-secondary"><i class="fa-solid fa-barcode"></i> ระเบียง</p>
-                        <p class="me-5 text-secondary"><i class="fa-solid fa-wifi"></i> อินเทอร์เน็ต</p>
+                        <% room.forEach(room => {
+                            if (room.facility_id === 1) { %>
+                                <p class="me-5 text-secondary"><i class="fi fi-ss-air-conditioner"></i> เครื่องปรับอากาศ</p>
+                            <% }
+                            if (room.facility_id === 2) { %>
+                                <p class="me-5 text-secondary"><i class="fa-solid fa-fan"></i> พัดลม</p>
+                            <% }
+                            if (room.facility_id === 3) { %>
+                                <p class="me-5 text-secondary"><i class="fa-solid fa-water"></i> เครื่องทำน้ำอุ่น</p>
+                            <% }
+                            if (room.facility_id === 4) { %>
+                                <p class="me-5 text-secondary"><i class="fa-solid fa-barcode"></i> ระเบียง</p>
+                            <% }
+                            if (room.facility_id === 5) { %>
+                                <p class="me-5 text-secondary"><i class="fa-solid fa-wifi"></i> อินเทอร์เน็ต</p>
+                            <% }
+                        }); %>
                     </div>
                 </div>
             </div>
@@ -44,7 +55,7 @@
                     </button>
                 </div>
 
-                <% if (bill && bill.length > 0) { %>
+                <% if (typeof(bill) !== "undefined" && bill.length > 0) { %>
                     <%- include('../lessee/payment-bill') %>
                 <% } else { %>
                     <h2 class="mt-4" style="text-align: center; font-weight: 900;">ไม่มีรายการค่าชำระบริการ</h2>
