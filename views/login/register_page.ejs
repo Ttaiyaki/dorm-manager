@@ -3,68 +3,86 @@
     <%- include('../partials/navforlog') %>
     <%- include('../partials/popup') %>
 
-    <!-- <div id="bg-layer"></div> -->
-    <div id="form-layer" class="shadow-sm p-3 mb-5 bg-body rounded bg" style="margin: 70px; margin-left: 20%; margin-right: 20%;">
-        <h1 style="text-align: center; font-weight: 900; margin-top: 40px; margin-bottom: 30px;">ลงทะเบียนบัญชีผู้ใช้</h1>
-        <form class="row g-3" method="POST" action="/create_acc" style="width: 80%; margin-left: auto; margin-right: auto;">
-            <h4 style="font-weight: 900;">1. ข้อมูลส่วนตัว</h4>
-            <div class="col-md-6">
-                <label for="firstname" class="form-label">ชื่อ</label>
-                <input type="text" class="form-control" name="firstName" id="firstname" value="<%=data.fn%>" required>
-            </div>
-            <div class="col-md-6">
-                <label for="lastName" class="form-label">นามสกุล</label>
-                <input type="text" class="form-control" name="lastName" value="<%=data.ln%>" required>
-            </div>
-            <div>
-                <label for="citizen" class="form-label">หมายเลขบัตรประชาชน</label>
-                <input type="tel" pattern="[0-9]{13}" class="form-control" name="citizen" value="<%=data.citizenid%>" required>
-            </div>
-            <div class="col-md-6">
-              <label for="phone" class="form-label">เบอร์โทรศัพท์</label>
-              <input type="tel" pattern="[0-9]{10}" class="form-control" name="phone" value="<%=data.phone%>" required>
-            </div>
-            <div class="col-md-6">
-              <label for="email" class="form-label">อีเมล</label>
-              <input type="email" class="form-control" name="email" value="<%=data.email%>" required>
-            </div>
+    <div class="shadow-sm p-3 mb-5 bg-body rounded bg" style="margin: 70px; margin-left: 20%; margin-right: 20%;">
+        <div class="m-0">
+            <button type="button" class="d-flex align-items-center btn" onclick="window.location.href = '/'" style="padding-left: 10px; margin-top: 20px; margin-left: 20px;">
+                <i class="fa-solid fa-chevron-left fs-5"><span class="fw-bold text-center ms-2">กลับ</span></i>
+            </button>
+        </div>
 
-            <h4 style="font-weight: 900; margin-top: 40px;">2. ข้อมูลที่พัก</h4>
-            <div>
-                <label for="roomNum" class="form-label">หมายเลขห้องพัก</label>
-                <input type="text" class="form-control" name="roomNum" value="<%=data.room%>" required>
-            </div>
-            <div style="width: 50%;">
-                <label for="checkInDate" class="form-label">วันที่ทำสัญญา</label>
-                <input type="date" class="form-control" name="date_start" value="<%=data.date_start%>" required>
-            </div>
-            <div style="width: 50%;">
-                <label for="checkInDate" class="form-label">วันที่หมดสัญญา</label>
-                <input type="date" class="form-control" name="date_end" value="<%=data.date_end%>" required>
-            </div>
+        <div>
+            <h1 style="text-align: center; font-weight: 900; margin-top: 40px; margin-bottom: 30px;">ลงทะเบียนบัญชีผู้ใช้</h1>
+            <form class="row g-3" method="POST" action="/create_acc" style="width: 80%; margin-left: auto; margin-right: auto;">
+                <h4 style="font-weight: 900;">1. ข้อมูลส่วนตัว</h4>
+                <div class="col-md-6">
+                    <label for="firstname" class="form-label">ชื่อ</label>
+                    <input type="text" class="form-control" name="firstName" id="firstname" value="<%=data.fn%>" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="lastName" class="form-label">นามสกุล</label>
+                    <input type="text" class="form-control" name="lastName" id="lastName" value="<%=data.ln%>" required>
+                </div>
+                <div>
+                    <label for="citizen" class="form-label">หมายเลขบัตรประชาชน</label>
+                    <input type="tel" pattern="[0-9]{13}" maxlength="13" class="form-control" name="citizen" id="citizen" value="<%=data.citizenid%>" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">เบอร์โทรศัพท์</label>
+                    <input type="tel" pattern="[0-9]{10}" maxlength="10" class="form-control" name="phone" id="phone" value="<%=data.phone%>" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="email" class="form-label">อีเมล</label>
+                    <input type="email" class="form-control" name="email" id="email" value="<%=data.email%>" required>
+                </div>
 
-            <h4 style="font-weight: 900; margin-top: 40px;">3. ข้อมูลบัญชีผู้ใช้</h4>
-            <div>
-                <label for="citizen" class="form-label">ชื่อผู้ใช้ (Username)</label>
-                <input type="text" class="form-control" name="uname" value="<%=data.uname%>" required>
-            </div>
-            <div class="col-md-6">
-              <label for="pwd" class="form-label">รหัสผ่าน</label>
-              <input type="password" class="form-control" name="pwd1" id="pwd1" required>
-            </div>
-            <div class="col-md-6">
-              <label for="pwd" class="form-label">ยืนยันรหัสผ่าน</label>
-              <input type="password" class="form-control" name="pwd2" id="pwd2" required onkeyup="checkMatch()">
-            </div>
-            <span id="message" style="color: red;"></span>
+                <h4 style="font-weight: 900; margin-top: 40px;">2. ข้อมูลที่พัก</h4>
+                <div>
+                    <label for="roomNum" class="form-label">หมายเลขห้องพัก</label>
+                    <input type="text" class="form-control" name="roomNum" id="roomNum" value="<%=data.room%>" required>
+                </div>
+                <div style="width: 50%;">
+                    <label for="date_start" class="form-label">วันที่ทำสัญญา</label>
+                    <input type="date" class="form-control" name="date_start" id="date_start" value="<%=data.date_start%>" required>
+                </div>
+                <div style="width: 50%;">
+                    <label for="date_end" class="form-label">วันที่หมดสัญญา</label>
+                    <input type="date" class="form-control" name="date_end" id="date_end" value="<%=data.date_end%>" required>
+                </div>
 
-            <div class="col-12" style="margin-top: 30px;">
-                <!-- <button type="submit" class="btn btn-success">สร้างบัญชี</button> -->
-                <input type="submit" value="สร้างบัญชี" class="btn btn-success">
-            </div>
-          </form>
+                <h4 style="font-weight: 900; margin-top: 40px;">3. ข้อมูลบัญชีผู้ใช้</h4>
+                <div>
+                    <label for="citizen" class="form-label">ชื่อผู้ใช้ (Username)</label>
+                    <input type="text" class="form-control" name="uname" id="uname" value="<%=data.uname%>" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="pwd" class="form-label">รหัสผ่าน</label>
+                    <input type="password" class="form-control" name="pwd1" id="pwd1" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="pwd" class="form-label">ยืนยันรหัสผ่าน</label>
+                    <input type="password" class="form-control" name="pwd2" id="pwd2" required onkeyup="checkMatch()">
+                </div>
+
+                <div class="col-12" style="margin-top: 30px;">
+                    <!-- <button type="submit" class="btn btn-success">สร้างบัญชี</button> -->
+                    <input type="submit" value="สร้างบัญชี" class="btn btn-success">
+                </div>
+            </form>
+        </div>
     </div>
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // กำหนดข้อความแจ้งเตือนใหม่ให้กับทุก input ที่มี required
+            document.querySelectorAll("input[required]").forEach(input => {
+                input.addEventListener("invalid", function (event) {
+                    event.target.setCustomValidity("กรุณากรอกข้อมูลให้ครบถ้วน"); // เปลี่ยนข้อความแจ้งเตือน
+                });
+
+                input.addEventListener("input", function (event) {
+                    event.target.setCustomValidity(""); // รีเซ็ตข้อความแจ้งเตือนเมื่อพิมพ์
+                });
+            });
+        });
         function checkMatch() {
             let password = document.getElementById("pwd1").value;
             let confirmPassword = document.getElementById("pwd2").value;

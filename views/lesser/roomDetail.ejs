@@ -372,7 +372,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">ยืนยันการลบ</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="removeRenter()">ยืนยันการลบ</button>
                 </div>
             </div>
         </div>
@@ -504,6 +504,31 @@
                     document.getElementById("cal-water-unit").innerHTML = val-"<%=room.meter_water%>";
                     break;
             }
+        }
+
+
+        function removeRenter() {
+            fetch("/lesser/remove-renter", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(
+                    {
+                        user_id: "<%=room.user_id%>",
+                    }
+                )
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.success, "ลบผู้เช่าออกจากห้องนี้แล้ว!");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    showAlert(data.success, data.message);
+                }
+            })
+            .catch(error => console.error("Error saving meter:", error));
         }
 
         function showAlert(success, message) {
