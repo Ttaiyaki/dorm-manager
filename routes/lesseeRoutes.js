@@ -81,11 +81,10 @@ router.get('/profile/edit', (req, res) => {
 });
 
 router.get('/uploadConfirmation', (req, res) => {
-    if (!req.cookies.user_id) { return res.redirect('/log-in'); }
-    const status = req.query.status;
-    const payment_id = req.query.id;
+    if (!req.cookies.user.user_id) { return res.redirect('/log-in'); }
+    const status = req.cookies.user.user_status;
 
-    res.render('lessee/uploadConfirmation', { status, payment_id });
+    res.render('lessee/uploadConfirmation', { status });
 });
 
 router.post('/upload', upload.single('payment_slip'), (req, res) => {
