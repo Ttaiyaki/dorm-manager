@@ -86,7 +86,6 @@ router.get('/rooms/:id', (req, res) => {
           status: getRoomStatus(statusRow),
           facilities: [...new Set(infos.map(info => info.name))],
         };
-        console.log({ room : room});
         res.render('lesser/roomDetail', {room : room});
       });
     });
@@ -154,11 +153,12 @@ router.post('/save-bill', (req, res) => {
   const { user_id, month, due_date, rent, elect_bill, water_bill } = req.body;
 
   const insertBill = `INSERT INTO bills (user_id, month, bill_status, rent, elect_bill, water_bill, due_date)
-                      VALUES (${user_id}, '${month}', 'unsend', ${rent}, ${elect_bill}, ${water_bill}, '${due_date}')`;
+                      VALUES (${user_id}, '${month}', 'unsend', ${rent}, ${elect_bill}, ${water_bill}, '${due_date}');`;
 
   db.run(insertBill, function(err) {
       if (err) {
         console.log(err.message);
+        return res.json({ success: false, message: err.message});
       }
       res.json({ success: true });
   });
@@ -167,7 +167,7 @@ router.post('/save-bill', (req, res) => {
 router.post('/save-meter', (req, res) => {
   const { room_id, elect, water, meterMonth } = req.body;
   const insertMeter = `INSERT INTO meters (room_id, meter_water, meter_elect, meter_month, updated_at)
-                      VALUES (${room_id}, ${water}, ${elect}, '${meterMonth}', CURRENT_TIMESTAMP)`;
+                      VALUES (${room_id}, ${water}, ${elect}, '${meterMonth}', CURRENT_TIMESTAMP);`;
   db.run(insertMeter, function(err) {
       if (err) {
           return res.json({ success: false, message: err.message});
@@ -220,11 +220,27 @@ router.get('/rooms/:id/pay-history', (req, res) => {
   });
 });
 
+router.put('/remove-renter', (req, res) => {
+  const { user_id } = req.body;
+
+  const updateUser = `UPDATE users
+                      SET room_id = null
+                      WHERE user_id = ${user_id}`;
+
+  db.run(updateUser, function(err) {
+      if (err) {
+        console.log(err.message);
+        return res.json({ success: false, message: err.message});
+      }
+      res.json({ success: true });
+  });
+});
+
 router.get('/verify-payment', (req, res) => {
   const date = new Date();
   date.setMonth(date.getMonth() - 1);
   const month = req.query.month || date.toISOString().slice(0, 7);
-  const query = ` SELECT month, room_number, room_id, first_name, last_name, bills.rent, elect_bill, water_bill, payment_status, payment_date, payment_slip, bill_id
+  const query = ` SELECT month, room_number, room_id, first_name, last_name, bills.rent, elect_bill, water_bill, payment_status, payment_date, payment_slip, bill_id, payment_id
                   FROM payments
                   LEFT JOIN bills
                   USING (bill_id)
@@ -250,6 +266,88 @@ router.get('/verify-payment', (req, res) => {
   });
 });
 
+router.put('/update-payment', (req, res) => {
+  const { payment_id, bill_id, approved } = req.body;
+  let payment_status, bill_status;
+  if (approved){
+    payment_status = "verified";
+  }else{
+    payment_status = "rejected";
+    bill_status = "unpaid";
+  }
+  
+  const updatePayment = `UPDATE payments
+                      SET payment_status = '${payment_status}'
+                      WHERE payment_id = ${payment_id};`;
+  const updateBill = `UPDATE bills
+                      SET bill_status = '${bill_status}'
+                      WHERE bill_id = ${bill_id};`;
+  db.run(updatePayment, function(err) {
+      if (err) {
+        console.log("updatePayment: "+err.message);
+        return res.json({ success: false, message: err.message});
+      }
+      if (!approved){
+        db.run(updateBill, function(err) {
+          if (err) {
+            console.log("updateBill: "+err.message);
+            return res.json({ success: false, message: err.message});
+          }
+          res.json({ success: true });
+        });
+      }else{
+        res.json({ success: true });
+      }
+  });
+});
+
+router.get('/bills', (req, res) => {
+  const date = new Date();
+  date.setMonth(date.getMonth() - 1);
+  let month = req.query.month || date.toISOString().slice(0, 7);
+
+  const next = new Date(month); 
+  next.setMonth(next.getMonth() + 1);
+  let nextMonth = next.toISOString().slice(0, 7);
+  const query = ` SELECT *
+                  FROM users
+                  LEFT JOIN bills
+                  ON users.user_id = bills.user_id AND bills.month = '${month}'
+                  LEFT JOIN accounts
+                  USING (user_id)
+                  LEFT JOIN rooms
+                  USING (room_id)
+                  WHERE date_start < '${nextMonth}' AND user_status = 'Verify'
+                  ORDER BY bill_status desc, bill_id;`;
+  db.all(query, (err, rows) => {
+    if (err) {
+      console.log(err.message);
+    }
+    console.log({ bills : rows })
+    if (rows.length === 0) {
+      return res.render('lesser/showBills', { bills: [{notFound: true}], billMonth: `${month}`});
+    }
+    res.render('lesser/showBills', { bills : rows, billMonth: `${month}`});
+  });
+});
+
+
+router.post('/sendBills', (req, res) => {
+  const month = req.body.month;
+  let bill_ids = req.body.bill_ids;
+  if (!Array.isArray(bill_ids)) {
+    bill_ids = [bill_ids];
+  }
+  const updateBills = `UPDATE bills
+                      SET bill_status = 'unpaid'
+                      WHERE bill_id IN (${bill_ids.join(',')});`;
+  db.run(updateBills, function(err) {
+    if (err) {
+      console.log(err.message);
+    }
+    res.redirect(`/lesser/bills?month=${month}`);
+  });
+});
 
 router.get('/lessee-info', (req, res) => {
   res.render('lesser/customer-info');
