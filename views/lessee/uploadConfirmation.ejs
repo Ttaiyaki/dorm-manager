@@ -5,9 +5,14 @@
 
         <div class="container mt-5">
             <div class="card shadow-sm p-4">
-                <a href="/lessee" class="btn btn-primary btn-back" style="width: 10%;">< ย้อนกลับ</a>
+                <div class="d-flex align-items-center mt-3" style="margin-left: 20px;">
+                    <button type="button" class="btn" onclick="window.location.href = '/lessee'">
+                        <i class="bi bi-arrow-left-circle fa-2x"></i>
+                    </button>
+                    <h5 class="fw-bold text-center mt-3">หน้าหลัก</h5>
+                </div>
                 <div class="text-center">
-                    <img src="/image/log-in.png" class="img-fluid mb-3" style="width: 35%;">
+                    <img src="/image/UploadSlip.png" class="img-fluid mb-3" style="width: 35%;">
                     <p class="amount-text">ยอดชำระค่าบริการทั้งหมด 0 บาท</p>
                 </div>
                 <form action="/lessee/upload" method="POST" enctype="multipart/form-data">

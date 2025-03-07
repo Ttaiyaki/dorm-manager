@@ -59,6 +59,8 @@ app.get('/logout', (req, res) => {
   return res.redirect('/log-in');
 })
 
+app.post('/resetPwd', authController.updatePwd);
+
 app.post('/create_acc', (req, res) => {
   bcrypt.hash(req.body.pwd1, 10, (err, hash) => {
     if (err) {return console.log(err.message);}
@@ -76,7 +78,11 @@ app.post('/create_acc', (req, res) => {
     pwd: hash,
     };
 
-    if (req.body.pwd1 != req.body.pwd2) {return res.send('Password not matched');}
+    if (req.body.pwd1 != req.body.pwd2) {
+      req.session.popup = "password not match";
+      req.session.form = userData;
+      return res.redirect('/register');
+    }
 
     authController.createUser(userData, req, res);
   })

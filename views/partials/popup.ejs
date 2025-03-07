@@ -27,7 +27,7 @@
     </div>
 <% } %>
 
-<% if (popup==="password not match") { %>
+<% if (popup==="password not found") { %>
     <div class="d-flex justify-content-center m-5 card-img-overlay" style="max-height: 13%; color: red;">
         <div class="toast toast-demo fade show" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
@@ -50,6 +50,104 @@
             </div>
             <div class="toast-body">
                 Username หรือ Email ซ้ำกรุณากรอกใหม่
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<% if (popup==="password not match") { %>
+    <div class="d-flex justify-content-center m-5 card-img-overlay" style="max-height: 13%; color: red;">
+        <div class="toast toast-demo fade show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+            <strong class="me-auto">แจ้งเตือน</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                รหัสผ่านไม่ตรงกัน กรุณากรอกรหัสใหม่
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<% if (popup==="reset page's email not found") { %>
+    <div class="d-flex justify-content-center m-5 card-img-overlay" style="max-height: 13%; color: red;">
+        <div class="toast toast-demo fade show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+            <strong class="me-auto">แจ้งเตือน</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                ไม่พบ email ในระบบ
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<% if (popup==="reset page's room_number not match email") { %>
+    <div class="d-flex justify-content-center m-5 card-img-overlay" style="max-height: 13%; color: red;">
+        <div class="toast toast-demo fade show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+            <strong class="me-auto">แจ้งเตือน</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                ข้อมูล Email ของผู้ใช้ไม่ตรงกับหมายเลขห้องที่ระบุ
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<% if (popup==="reset page's update success") { %>
+    <div class="d-flex justify-content-center m-5 card-img-overlay" style="max-height: 13%; color: green;">
+        <div class="toast toast-demo fade show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+            <strong class="me-auto">แจ้งเตือน</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                เปลี่ยนรหัสผ่านเสร็จเรียบร้อย
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<% if (popup==="room not found") { %>
+    <div class="d-flex justify-content-center m-5 card-img-overlay" style="max-height: 13%; color: red;">
+        <div class="toast toast-demo fade show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+            <strong class="me-auto">แจ้งเตือน</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                ไม่พบหมายเลขห้องที่ระบุ กรุณากรอกหมายเลขห้องใหม่
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<% if (popup==="email is already exist") { %>
+    <div class="d-flex justify-content-center m-5 card-img-overlay" style="max-height: 13%; color: red;">
+        <div class="toast toast-demo fade show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+            <strong class="me-auto">แจ้งเตือน</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Email ที่ระบุซ้ำ กรุณากรอก Email ใหม่
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<% if (popup==="create user success") { %>
+    <div class="d-flex justify-content-center m-5 card-img-overlay" style="max-height: 13%; color: green;">
+        <div class="toast toast-demo fade show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+            <strong class="me-auto">แจ้งเตือน</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                สร้างบัญชีผู้เช่าเรียบร้อย กรุณารอผู้ให้เช่ายืนยันสถานะ
             </div>
         </div>
     </div>

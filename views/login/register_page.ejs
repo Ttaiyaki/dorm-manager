@@ -50,12 +50,13 @@
             </div>
             <div class="col-md-6">
               <label for="pwd" class="form-label">รหัสผ่าน</label>
-              <input type="password" class="form-control" name="pwd1" required>
+              <input type="password" class="form-control" name="pwd1" id="pwd1" required>
             </div>
             <div class="col-md-6">
               <label for="pwd" class="form-label">ยืนยันรหัสผ่าน</label>
-              <input type="password" class="form-control" name="pwd2" required>
+              <input type="password" class="form-control" name="pwd2" id="pwd2" required onkeyup="checkMatch()">
             </div>
+            <span id="message" style="color: red;"></span>
 
             <div class="col-12" style="margin-top: 30px;">
                 <!-- <button type="submit" class="btn btn-success">สร้างบัญชี</button> -->
@@ -63,6 +64,21 @@
             </div>
           </form>
     </div>
+    <script>
+        function checkMatch() {
+            let password = document.getElementById("pwd1").value;
+            let confirmPassword = document.getElementById("pwd2").value;
+            let message = document.getElementById("message");
+
+            if (password === confirmPassword) {
+                message.style.color = "green";
+                message.textContent = "รหัสผ่านตรงกัน ✅";
+            } else {
+                message.style.color = "red";
+                message.textContent = "รหัสผ่านไม่ตรงกัน ❌";
+            }
+        }
+    </script>
 </body>
 <%- include('../partials/footer') %>
 </html>
