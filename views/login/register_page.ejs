@@ -62,6 +62,7 @@
                     <label for="pwd" class="form-label">ยืนยันรหัสผ่าน</label>
                     <input type="password" class="form-control" name="pwd2" id="pwd2" required onkeyup="checkMatch()">
                 </div>
+                <span id="message"></span>
 
                 <div class="col-12" style="margin-top: 30px;">
                     <!-- <button type="submit" class="btn btn-success">สร้างบัญชี</button> -->
@@ -83,10 +84,12 @@
                 });
             });
         });
+
         function checkMatch() {
             let password = document.getElementById("pwd1").value;
             let confirmPassword = document.getElementById("pwd2").value;
             let message = document.getElementById("message");
+            console.log(message)
 
             if (password === confirmPassword) {
                 message.style.color = "green";
