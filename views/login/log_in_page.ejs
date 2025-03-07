@@ -2,34 +2,6 @@
 <body>
     <%- include('../partials/navforlog') %>
     <%- include('../partials/popup') %>
-    <div id="overlay">
-        <div class="overlay-content" style="justify-items: center; margin: 40px;">
-            <h1>ลืมรหัสผ่าน?</h1>
-            <form action="/resetPwd" method="POST" style="width: 70%;">
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="room_number" name="room_number" required>
-                    <label for="floatingInput">หมายเลขห้อง</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="email" class="form-control" id="email" name="email" required>
-                    <label for="floatingInput">อีเมล</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="pwd1" name="pwd1" required>
-                    <label for="floatingInput">รหัสผ่านใหม่</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="pwd2" name="pwd2" required onkeyup="checkMatch()">
-                    <label for="floatingInput">รหัสผ่านใหม่</label>
-                </div>
-                <span id="message" style="color: red;"></span> <br><br>
-
-                <button type="submit" class="btn btn-success">เปลี่ยนรหัสผ่าน</button>
-                <button class="btn btn-danger" onclick="off()">ปิดหน้าต่าง</button>
-            </form>
-            
-        </div>
-    </div>
     <div class="land-grid">
         <div id="left-side">
             <img src="/image/log-in.png" alt="เข้าสู่ระบบ" style="width: 100%;">
@@ -45,41 +17,76 @@
                     <input type="password" class="form-control" id="user_password" name="user_password" required>
                     <label for="floatingPassword">รหัสผ่าน</label>
                 </div>
-                <a href="#" style="float: right;" role="button" onclick="on()">ลืมรหัสผ่าน?</a>
+
+                <button type="button" style="float: right;" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#forgetPwd">
+                    ลืมรหัสผ่าน?
+                </button>
+
                 <div style="justify-self: center; margin-top: 40px; margin-bottom: 30px;">
                     <input type="submit" value="เข้าสู่ระบบ" class="btn btn-success">
                 </div>
             </form>
+
+            <!-- forgetPwd's overlay -->
+            <div class="modal" id="forgetPwd" tabindex="-1" aria-labelledby="forgetPwd" aria-hidden="true" data-bs-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><strong>ลืมรหัสผ่าน?</strong></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="justify-items: center;">
+                            <form action="/resetPwd" method="POST" style="width: 70%;">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="room_number" name="room_number" required>
+                                    <label for="floatingInput">หมายเลขห้อง</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <label for="floatingInput">อีเมล</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="password" class="form-control" id="pwd1" name="pwd1" required>
+                                    <label for="floatingInput">รหัสผ่านใหม่</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="password" class="form-control" id="pwd2" name="pwd2" required onkeyup="checkMatch()">
+                                    <label for="floatingInput">ยืนยันรหัสผ่านใหม่</label>
+                                </div>
+                                <div style="justify-self: center;">
+                                    <span id="message" style="color: red;"></span>
+                                    <br><br>
+                                    <button type="submit" class="btn btn-success">เปลี่ยนรหัสผ่าน</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <hr>
             <p style="margin-top: 30px;">คุณยังไม่มีบัญชี? <a href="/register">ลงทะเบียน</a></p>
         </div>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("overlay").style.display = "none";
+        document.addEventListener("DOMContentLoaded", function () {
+            // กำหนดข้อความแจ้งเตือนใหม่ให้กับทุก input ที่มี required
+            document.querySelectorAll("input[required]").forEach(input => {
+                input.addEventListener("invalid", function (event) {
+                    event.target.setCustomValidity("กรุณากรอกข้อมูลให้ครบถ้วน"); // เปลี่ยนข้อความแจ้งเตือน
+                });
+
+                input.addEventListener("input", function (event) {
+                    event.target.setCustomValidity(""); // รีเซ็ตข้อความแจ้งเตือนเมื่อพิมพ์
+                });
+            });
         });
-
-        function on() {
-            document.getElementById("overlay").style.display = "flex";
-        }
-
-        function off() {
-            document.getElementById("overlay").style.display = "none";
-        }
-
-        // ปิด overlay เมื่อกดปุ่ม Esc
-        document.addEventListener("keydown", function(event) {
-            if (event.key === "Escape") {
-                off();
-            }
-        });
-
         function checkMatch() {
             let password = document.getElementById("pwd1").value;
             let confirmPassword = document.getElementById("pwd2").value;
             let message = document.getElementById("message");
 
-            if (password === confirmPassword) {
+            if (password === confirmPassword && password !== "") {
                 message.style.color = "green";
                 message.textContent = "รหัสผ่านตรงกัน ✅";
             } else {
