@@ -97,7 +97,20 @@ router.post('/upload', upload.single('payment_slip'), (req, res) => {
     });
 });
 
+router.post('/profile/update', upload.single('user_img'), (req, res) => {
+    if (!req.cookies.user.user_id) { return res.redirect('/log-in'); }
 
+    const userId = req.cookies.user.user_id;
+    const { first_name, last_name, email, phone, user_name } = req.body;
+    const userImg = req.file ? req.file.buffer : null;
+
+    lesseeService.updateUserProfile(userId, first_name, last_name, userImg, email, phone, user_name, (err) => {
+        if (err) {
+            console.log('Error updating user profile:', err);
+        }
+        res.redirect('/lessee/profile');
+    });
+});
 
 module.exports = router;
 

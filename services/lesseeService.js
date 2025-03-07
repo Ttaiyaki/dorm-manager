@@ -32,4 +32,24 @@ const updateData = (query, data, callback) => {
   db.run(query, data, callback);
 };
 
-module.exports = { getUserByID, savePaymentSlip, getData, updateData };
+const updateUserProfile = (userId, firstName, lastName, userImg, email, phone, userName, callback) => {
+  const updateUserQuery = `UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ? ${userImg ? ', user_img = ?' : ''} WHERE user_id = ?`;
+  const updateAccountQuery = `UPDATE accounts SET user_name = ? WHERE user_id = ?`;
+
+  let userParams = userImg ? [firstName, lastName, email, phone, userImg, userId] : [firstName, lastName, email, phone, userId];
+  let accountParams = [userName, userId];
+
+  db.serialize(() => {
+      db.run(updateUserQuery, userParams, (err) => {
+          if (err) return callback(err);
+
+          db.run(updateAccountQuery, accountParams, (err) => {
+              if (err) return callback(err);
+              
+              callback(null);
+          });
+      });
+  });
+};
+
+module.exports = { getUserByID, savePaymentSlip, getData, updateData, updateUserProfile };
