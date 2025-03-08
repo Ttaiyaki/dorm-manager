@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css'>
     <link rel="stylesheet" href="/css/landlordStyle.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 <body>
     <%- include('../partials/landlordNav') %>
@@ -19,7 +20,7 @@
         </div>
         <div class="container p-5 border mb-5 shadow-sm bg-white"">
             <h5 class="mb-4 mt-3">ผู้เช่า: <%=histories[0].first_name%> <%=histories[0].last_name%></h5>
-            <table class="table table-bordered align-middle">
+            <table class="table table-bordered align-middle text-center">
                 <thead class="table-dark">
                     <tr>
                         <th class="py-3">รอบเดือน</th>
@@ -33,22 +34,30 @@
                         <%
                             let status;
                             let color;
+                            let textColor;
                             if(history.payment_status=="pending"){
                                 status = "รอตรวจสอบ";
                                 color = "warning";
+                                textColor = "dark";
                             }else if(history.bill_status=="unpaid"){
                                 status = "ค้างชำระ";
                                 color = "danger";
+                                textColor = "light";
                             }else{
                                 status = "ชำระแล้ว";
                                 color = "success";
+                                textColor = "light";
                             }
                         %>
                         <tr>
                             <td><%=history.month%></td>
                             <td>ค่าเช่าห้อง: <%=history.rent%>, ค่าไฟ: <%=history.elect_bill%>, ค่าน้ำ: <%=history.water_bill%></td>
                             <td><%=history.rent+history.elect_bill+history.water_bill%></td>
-                            <td class="text-<%=color%>"><%=status%></td>
+                            <td class="d-flex justify-content-center">
+                                <div class="bg-<%=color%> text-<%=textColor%> rounded-pill my-1 w-75 py-1" style="font-size: 14px;">
+                                    <%=status%>
+                                </div>
+                            </td>
                         </tr>
                     <% })%>
                 </tbody>
