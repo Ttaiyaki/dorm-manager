@@ -9,9 +9,49 @@ let db = new sqlite3.Database('dormitory.db', (err) =>{
     };
   });
 
-router.get('/', (req, res) => {
-  res.render('lesser/lesserHome');
-});
+  router.get('/', (req, res) => {
+    const roomCount = ` SELECT count(rooms.room_id) as room_num, count(accounts.user_id) as room_lessee_num
+                        FROM rooms
+                        LEFT JOIN users
+                        ON rooms.room_id = users.room_id
+                        LEFT JOIN accounts
+                        ON users.user_id = accounts.user_id AND accounts.user_status = 'Verify'`;
+    const paymentCount = ` SELECT  COUNT(CASE WHEN bill_status = 'unpaid' THEN 1 END) AS unpaid_bills,
+                                COUNT(CASE WHEN bill_status = 'unsend' THEN 1 END) AS unsend_bills,
+                                COUNT(CASE WHEN payment_status = 'pending' THEN 1 END) AS pending_payments
+                            FROM bills
+                            LEFT JOIN payments
+                            USING (bill_id);`;
+    const lesseeCount = ` SELECT count(users.user_id) as user_num, count(user_status) as user_verify_num
+                          FROM users
+                          LEFT JOIN accounts
+                          ON users.user_id = accounts.user_id AND user_status = 'Verify';`;
+    db.each(roomCount, (err, roomData) => {
+        if (err) {
+          console.log(err.message);
+        }
+        db.each(paymentCount, (err, paymentData) => {
+          if (err) {
+            console.log(err.message);
+          }
+          db.each(lesseeCount, (err, lesseeData) => {
+            if (err) {
+              console.log(err.message);
+            }
+            console.log({
+              roomData: roomData,
+              paymentData: paymentData,
+              lesseeData: lesseeData,
+            })
+            res.render('lesser/lesserHome', {
+              roomData: roomData,
+              paymentData: paymentData,
+              lesseeData: lesseeData,
+            });
+        });
+      });
+    });
+  });
 
 router.get('/rooms', (req, res) => {
     const query = ` SELECT  room_id, room_number, user_id, user_status,
@@ -293,10 +333,10 @@ router.put('/update-payment', (req, res) => {
             console.log("updateBill: "+err.message);
             return res.json({ success: false, message: err.message});
           }
-          res.json({ success: true });
+          res.json({ success: true, message: "ปฏิเสธใบเสร็จเรียบร้อย!" });
         });
       }else{
-        res.json({ success: true });
+        res.json({ success: true, message: "อนุมัติใบเสร็จเรียบร้อย!" });
       }
   });
 });
