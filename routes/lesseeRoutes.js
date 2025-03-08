@@ -97,7 +97,7 @@ router.get('/profile', (req, res) => {
         if (user.user_img) {
             user.user_img = `data:image/png;base64,${user.user_img.toString('base64')}`;
         } else {
-            user.user_img = '/image/defaultProfile.png';
+            user.user_img = '/image/defaultProfile.jpg';
         }
 
         console.log(user)
