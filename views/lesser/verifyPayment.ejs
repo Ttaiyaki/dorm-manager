@@ -8,9 +8,27 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="/css/landlordStyle.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 <body>
     <%- include('../partials/landlordNav') %>
+    <!-- alert modal-->
+    <div class="modal fade" id="alert-modal">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header text-white" id="alert-header">
+                    <h4 class="modal-title" id="alert-title"></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body mx-4 my-2 text-center">
+                    <img src="" id="alert-icon" style="width: 20%;">
+                    <div class="py-4 h5" id="alert-message">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container mt-nav">
         <p class="h1 text-center pt-5 mb-5">ข้อมูลการชำระเงิน</p>
         
@@ -41,26 +59,34 @@
                         <%
                                 let status;
                                 let color;
+                                let textColor
                                 switch (payment.payment_status){
                                     case "pending":
                                         status="รอตรวจสอบ";
                                         color = "warning";
+                                        textColor = "dark";
                                         break;
                                     case "verified":
                                         status="ตรวจสอบแล้ว";
                                         color = "success";
+                                        textColor = "light";
                                         break;
                                     case "rejected":
                                         status="ปฏิเสธ";
                                         color = "danger";
+                                        textColor = "light";
                                         break;
                                 }
                         %>
-                        <tr>
+                        <tr class="align-middle">
                             <td><%=payment.room_number%></td>
                             <td><%=payment.first_name%> <%=payment.last_name%></td>
                             <td><%=payment.rent+payment.elect_bill+payment.water_bill%> บาท [ ค่าเช่า: <%=payment.rent%>, ค่าไฟ: <%=payment.elect_bill%>, ค่าน้ำ: <%=payment.water_bill%>]</td>
-                            <td class="text-<%=color%>"><%=status%></td>
+                            <td class="d-flex justify-content-center">
+                                <div class="bg-<%=color%> text-<%=textColor%> rounded-pill my-1 w-75 py-1" style="font-size: 14px;">
+                                    <%=status%>
+                                </div>
+                            </td>
                             <td><a href="" data-bs-toggle="modal" data-bs-target="#showBill-<%=payment.room_id%>" class="text-decoration-none"><i class="fa-solid fa-magnifying-glass"></i> ตรวจสอบ</a></td>
                         </tr>
                     <% }); %>
@@ -88,13 +114,13 @@
             <div class="modal fade" id="showBill-<%=payment.room_id%>">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
-                        <div class="modal-header">
+                        <div class="modal-header bg-primary text-light">
                             <h4 class="modal-title">ใบเสร็จ ห้อง <%=payment.room_number%></h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body p-5">
                             <p class="h4">รายละเอียด</p>
-                            <div class="mt-4 mb-2">
+                            <div class="mt-4 mb-3">
                                 <p class="m-0">เลขที่: <%=payment.bill_id%></p>
                                 <p class="m-0">สถานะ: <%=status%></p>
                                 <p class="m-0">ชำระโดย: <%=payment.first_name%> <%=payment.last_name%></p>
@@ -164,16 +190,31 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    location.reload();
-                    // showAlert(data.success, "ลบผู้เช่าออกจากห้องนี้แล้ว!");
-                    // setTimeout(() => {
-                    //     location.reload();
-                    // }, 1000);
+                    showAlert(data.success, data.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
                 } else {
-                    // showAlert(data.success, data.message);
+                    showAlert(data.success, data.message);
                 }
             })
             .catch(error => console.error("Error saving meter:", error));
+        }
+        function showAlert(success, message) {
+            document.getElementById("alert-header").classList.remove('bg-danger', 'bg-success');
+            if(success){
+                document.getElementById("alert-title").textContent = "สำเร็จ";
+                document.getElementById("alert-icon").src = "/image/success-icon.png";
+                document.getElementById("alert-header").classList.add('bg-success');
+            }else{
+                document.getElementById("alert-title").textContent = "ไม่สำเร็จ";
+                document.getElementById("alert-icon").src = "/image/fail-icon.png";
+                document.getElementById("alert-header").classList.add('bg-danger');
+            }
+            document.getElementById("alert-message").textContent = message;
+            
+            let alertModal = new bootstrap.Modal(document.getElementById('alert-modal'));
+            alertModal.show();
         }
     </script>
 </body>
