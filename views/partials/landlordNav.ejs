@@ -8,7 +8,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item">
                     <a class="nav-link" href="/lesser/rooms">ห้องพัก</a>
                 </li>
@@ -18,7 +18,28 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/lesser/verify-payment">ตรวจสอบการชำระ</a>
                 </li>
+                <li class="nav-item dropdown d-none d-sm-block">
+                    <a class="nav-link d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle text-secondary" style="font-size: 24px;"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item text-danger" href="/logout">ออกจากระบบ</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item d-block d-sm-none">
+                    <a class="nav-link text-danger" href="/logout">ออกจากระบบ</a>
+                </li>
             </ul>
         </div>
     </div>
 </nav>
+
+<!-- <div class="nav-item dropdown ms-3">
+    <button class="nav-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-person-circle" style="font-size: 36px; color: whitesmoke;"></i>
+    </button>
+    <div class="dropdown-menu dropdown-menu-end" style="background-color: #9ea4d4f7; font-size: large; margin-top: 20px;">
+        <div class="dropdown-divider" style="background-color: white;"></div>
+        <a class="dropdown-item" href="/logout">ออกจากระบบ</a>
+    </div>
+</div> -->

@@ -211,6 +211,12 @@ router.get('/profile/edit', (req, res) => {
         }
         if (user.length === 0) {console.log('no user')}
 
+        if (user.user_img) {
+            user.user_img = `data:image/png;base64,${user.user_img.toString('base64')}`;
+        } else {
+            user.user_img = '/image/defaultProfile.jpg';
+        }
+
         console.log(user)
         
         const getRoom = `SELECT * FROM rooms WHERE room_id = ?;`;

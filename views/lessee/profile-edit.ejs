@@ -18,9 +18,9 @@
                             <br>
                             <label class="position-relative" style="cursor: pointer;">
                                 <img id="profilePicture" class="rounded-circle img-fluid" width="60%" height="150"
-                                    src="/image/UploadPfp3.png" style="object-fit: cover; aspect-ratio: 1 / 1;">
+                                    src="<%=user.user_img%>" style="object-fit: cover; aspect-ratio: 1 / 1;">
                                 <input type="file" name="user_img" id="profilePictureInput" class="d-none"
-                                    accept="image/*" onchange="previewImage(event)" required>
+                                    accept="image/*" onchange="previewImage(event)">
                             </label>
                         </div>
                     </div>
@@ -36,25 +36,25 @@
                             <div class="d-flex align-items-center mb-2" style="margin-top: 16px;">
                                 <strong style="font-size: 23px; margin-right: 22px;">ชื่อจริง :</strong>
                                 <input type="text" class="form-control" placeholder="กรอกชื่อจริง" value="<%=user.first_name%>"
-                                    style="width: 30%; margin-right: 20px;" name="first_name" required>
+                                    style="width: 30%; margin-right: 20px;" name="first_name" >
                                 <strong style="font-size: 23px; margin-right: 20px;">นามสกุล :</strong>
                                 <input type="text" class="form-control" placeholder="กรอกนามสกุล" value="<%=user.last_name%>"
-                                    style="width: 30%; margin-right: 20px;" name="last_name" required>
+                                    style="width: 30%; margin-right: 20px;" name="last_name" >
                             </div>
                             <div class="d-flex align-items-center mb-2" style="margin-top: 16px;">
                                 <strong style="font-size: 23px; width: 100px;">ชื่อบัญชี :</strong>
                                 <input type="text" class="form-control" placeholder="กรอกชื่อบัญชี" value="<%=user.user_name%>"
-                                    style="width: 74.7%;" name="user_name" required>
+                                    style="width: 74.7%;" name="user_name" >
                             </div>
                             <div class="d-flex align-items-center mb-2" style="margin-top: 16px;">
                                 <strong style="font-size: 23px; width: 100px;">อีเมล์ :</strong>
                                 <input type="text" class="form-control" placeholder="กรอกอีเมล์" style="width: 74.7%;" value="<%=user.email%>"
-                                    name="email" required>
+                                    name="email" >
                             </div>
                             <div class="d-flex align-items-center mb-2" style="margin-top: 16px;">
                                 <strong style="font-size: 23px; width: 100px;">เบอร์โทร :</strong>
                                 <input type="text" class="form-control" placeholder="กรอกหมายเลขโทรศัพท์" value="<%=user.phone%>"
-                                    style="width: 74.7%;" name="phone" required>
+                                    style="width: 74.7%;" name="phone" >
                             </div>
 
                         </div>
