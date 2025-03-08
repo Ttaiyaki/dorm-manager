@@ -3,6 +3,19 @@ const express = require('express');
 const router = express.Router();
 const sqlite3 = require('sqlite3').verbose();
 
+const checkAuthen = (req, res) => {
+  console.log(req.cookies.user);
+  if (!req.cookies.user) {
+      res.clearCookie('user');
+      req.session.popup = "not login";
+      return res.redirect('/log-in');
+  }
+  if (req.cookies.user.user_type == 1) {
+      req.session.popup = "not lesser";
+      return res.redirect('/log-in');
+  }
+}
+
 let db = new sqlite3.Database('dormitory.db', (err) =>{
     if (err) {
       return console.error(err.message);
@@ -10,6 +23,7 @@ let db = new sqlite3.Database('dormitory.db', (err) =>{
   });
 
   router.get('/', (req, res) => {
+    checkAuthen(req, res);
     const roomCount = ` SELECT count(rooms.room_id) as room_num, count(accounts.user_id) as room_lessee_num
                         FROM rooms
                         LEFT JOIN users
@@ -54,6 +68,7 @@ let db = new sqlite3.Database('dormitory.db', (err) =>{
   });
 
 router.get('/rooms', (req, res) => {
+    checkAuthen(req, res);
     const query = ` SELECT  room_id, room_number, user_id, user_status,
                             COUNT(CASE WHEN bill_status = 'unpaid' THEN 1 END) AS unpaid_bills,
                             COUNT(CASE WHEN payment_status = 'pending' THEN 1 END) AS pending_payments
@@ -82,6 +97,7 @@ router.get('/rooms', (req, res) => {
 });
 
 router.get('/rooms/:id', (req, res) => {
+    checkAuthen(req, res);
     const statusQuery = ` SELECT user_id, user_status,
                             COUNT(CASE WHEN bill_status = 'unpaid' THEN 1 END) AS unpaid_bills,
                             COUNT(CASE WHEN payment_status = 'pending' THEN 1 END) AS pending_payments
@@ -132,6 +148,7 @@ router.get('/rooms/:id', (req, res) => {
 });
 
 router.post('/update-room/:id', (req, res) => {
+  checkAuthen(req, res);
   const room_id = req.params.id;
   const { room_number, building, level, room_type, room_size, rent, elect_unit, water_unit} = req.body;
   let facilities = req.body.facilities || [];
@@ -190,6 +207,7 @@ router.post('/update-room/:id', (req, res) => {
 });
 
 router.post('/save-bill', (req, res) => {
+  checkAuthen(req, res);
   const { user_id, month, due_date, rent, elect_bill, water_bill } = req.body;
 
   const insertBill = `INSERT INTO bills (user_id, month, bill_status, rent, elect_bill, water_bill, due_date)
@@ -205,6 +223,7 @@ router.post('/save-bill', (req, res) => {
 });
 
 router.post('/save-meter', (req, res) => {
+  checkAuthen(req, res);
   const { room_id, elect, water, meterMonth } = req.body;
   const insertMeter = `INSERT INTO meters (room_id, meter_water, meter_elect, meter_month, updated_at)
                       VALUES (${room_id}, ${water}, ${elect}, '${meterMonth}', CURRENT_TIMESTAMP);`;
@@ -217,6 +236,7 @@ router.post('/save-meter', (req, res) => {
 });
 
 router.get('/get-meter', (req, res) => {
+  checkAuthen(req, res);
   const query = ` SELECT room_id, meter_id, meter_water, meter_elect, meter_month, updated_at
                   FROM rooms
                   LEFT JOIN meters
@@ -243,6 +263,7 @@ router.get('/get-meter', (req, res) => {
 });
 
 router.get('/rooms/:id/pay-history', (req, res) => {
+  checkAuthen(req, res);
   const query = ` SELECT room_id, room_number, first_name, last_name, bill_status, month, bills.rent, water_bill, elect_bill, due_date, payment_status, payment_date
                   FROM rooms
                   LEFT JOIN users
@@ -261,6 +282,7 @@ router.get('/rooms/:id/pay-history', (req, res) => {
 });
 
 router.put('/remove-renter', (req, res) => {
+  checkAuthen(req, res);
   const { user_id } = req.body;
 
   const updateUser = `UPDATE users
@@ -277,6 +299,7 @@ router.put('/remove-renter', (req, res) => {
 });
 
 router.get('/verify-payment', (req, res) => {
+  checkAuthen(req, res);
   const date = new Date();
   date.setMonth(date.getMonth() - 1);
   const month = req.query.month || date.toISOString().slice(0, 7);
@@ -307,6 +330,7 @@ router.get('/verify-payment', (req, res) => {
 });
 
 router.put('/update-payment', (req, res) => {
+  checkAuthen(req, res);
   const { payment_id, bill_id, approved } = req.body;
   let payment_status, bill_status;
   if (approved){
@@ -342,6 +366,7 @@ router.put('/update-payment', (req, res) => {
 });
 
 router.get('/bills', (req, res) => {
+  checkAuthen(req, res);
   const date = new Date();
   date.setMonth(date.getMonth() - 1);
   let month = req.query.month || date.toISOString().slice(0, 7);
@@ -373,6 +398,7 @@ router.get('/bills', (req, res) => {
 
 
 router.post('/sendBills', (req, res) => {
+  checkAuthen(req, res);
   const month = req.body.month;
   let bill_ids = req.body.bill_ids;
   if (!Array.isArray(bill_ids)) {
@@ -408,6 +434,7 @@ router.get('/lessee-info', (req, res) => {
 
 
 router.get('/user_img/:id', (req, res) => {
+  checkAuthen(req, res);
   const query = ` SELECT user_img
                   FROM users
                   WHERE user_id = ${req.params.id};

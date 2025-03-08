@@ -7,21 +7,26 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-router.get('/', (req, res) => {
+const checkAuthen = (req, res, next) => {
     console.log(req.cookies.user);
-    if (!req.cookies.user) {
-        res.clearCookie('user');
+    console.log(typeof(req.cookies.user)=="undefined");
+    if (typeof(req.cookies.user)=="undefined") {
         req.session.popup = "not login";
         return res.redirect('/log-in');
     }
-    if (req.cookies.user.user_type != 1) {
+    else if (req.cookies.user.user_type != 1) {
         req.cookies.popup = "not lessee";
         return res.redirect('/log-in');
     }
-    if (req.cookies.user.user_status != "Verify") {
+    else if (req.cookies.user.user_status != "Verify") {
         req.session.popup = "user not verify";
         return res.redirect('/log-in');
     }
+
+    next();
+}
+
+router.get('/', checkAuthen, (req, res) => {
 
     const getUserRoom = ` SELECT room_id FROM users WHERE user_id = ?; `;
     lesseeService.getData(getUserRoom, [req.cookies.user.user_id], (err, room_id) => {
@@ -64,28 +69,17 @@ router.get('/', (req, res) => {
                     if (meter.length === 0) {console.log('no meter')}
                     console.log(meter)
 
-                    return res.render('lessee/clientHome', {room : room, bills : bill, meter : meter})
+                    const popup = req.session.popup;
+                    delete req.session.popup;
+                    return res.render('lessee/clientHome', {room : room, bills : bill, meter : meter, popup : popup});
                 })
             })
         })
     })
 });
 
-router.get('/profile', (req, res) => {
-    console.log(req.cookies.user);
-    if (!req.cookies.user) {
-        res.clearCookie('user');
-        req.session.popup = "not login";
-        return res.redirect('/log-in');
-    }
-    if (req.cookies.user.user_type != 1) {
-        req.cookies.popup = "not lessee";
-        return res.redirect('/log-in');
-    }
-    if (req.cookies.user.user_status != "Verify") {
-        req.session.popup = "user not verify";
-        return res.redirect('/log-in');
-    }
+router.get('/profile', checkAuthen, (req, res) => {
+
     lesseeService.getUserByID(req.cookies.user.user_id, (err, user) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -112,25 +106,11 @@ router.get('/profile', (req, res) => {
     })
 });
 
-router.get('/payment-history', (req, res) => {
-    console.log(req.cookies.user);
-    if (!req.cookies.user) {
-        res.clearCookie('user');
-        req.session.popup = "not login";
-        return res.redirect('/log-in');
-    }
-    if (req.cookies.user.user_type != 1) {
-        req.cookies.popup = "not lessee";
-        return res.redirect('/log-in');
-    }
-    if (req.cookies.user.user_status != "Verify") {
-        req.session.popup = "user not verify";
-        return res.redirect('/log-in');
-    }
+router.get('/payment-history', checkAuthen, (req, res) => {
 
     const getBill = `SELECT * FROM bills
                      WHERE user_id = ? AND bill_status != 'unsend'
-                     ORDER BY bill_status`;
+                     ORDER BY bill_id`;
     lesseeService.getData(getBill, [req.cookies.user.user_id], (err, bills) => {
         if (err) {return console.log(err.message);}
         if (bills.length === 0) {console.log('no bills');}
@@ -190,21 +170,7 @@ router.get('/payment-history', (req, res) => {
     })
 });
 
-router.get('/profile/edit', (req, res) => {
-    console.log(req.cookies.user);
-    if (!req.cookies.user) {
-        res.clearCookie('user');
-        req.session.popup = "not login";
-        return res.redirect('/log-in');
-    }
-    if (req.cookies.user.user_type != 1) {
-        req.cookies.popup = "not lessee";
-        return res.redirect('/log-in');
-    }
-    if (req.cookies.user.user_status != "Verify") {
-        req.session.popup = "user not verify";
-        return res.redirect('/log-in');
-    }
+router.get('/profile/edit', checkAuthen, (req, res) => {
     lesseeService.getUserByID(req.cookies.user.user_id, (err, user) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -231,43 +197,14 @@ router.get('/profile/edit', (req, res) => {
     })
 });
 
-router.get('/uploadConfirmation', (req, res) => {
-    console.log(req.cookies.user);
-    // console.log(req.session.payment)
-    if (!req.cookies.user) {
-        res.clearCookie('user');
-        req.session.popup = "not login";
-        return res.redirect('/log-in');
-    }
-    if (req.cookies.user.user_type != 1) {
-        req.cookies.popup = "not lessee";
-        return res.redirect('/log-in');
-    }
-    if (req.cookies.user.user_status != "Verify") {
-        req.session.popup = "user not verify";
-        return res.redirect('/log-in');
-    }
+router.get('/uploadConfirmation', checkAuthen, (req, res) => {
     const payment = req.session.payment;
 
     console.log(payment)
     res.render('lessee/uploadConfirmation', { payment : payment });
 });
 
-router.post('/upload', upload.single('payment_slip'), (req, res) => {
-    console.log(req.cookies.user);
-    if (!req.cookies.user) {
-        res.clearCookie('user');
-        req.session.popup = "not login";
-        return res.redirect('/log-in');
-    }
-    if (req.cookies.user.user_type != 1) {
-        req.cookies.popup = "not lessee";
-        return res.redirect('/log-in');
-    }
-    if (req.cookies.user.user_status != "Verify") {
-        req.session.popup = "user not verify";
-        return res.redirect('/log-in');
-    }
+router.post('/upload', checkAuthen, upload.single('payment_slip'), (req, res) => {
     const billId = req.session.billID;
     const fileBuffer = req.file.buffer;
 
@@ -279,27 +216,13 @@ router.post('/upload', upload.single('payment_slip'), (req, res) => {
             if (err) {return console.log(err.message);}
 
             req.session.popup = "payment success";
-            return res.redirect('/');
+            return res.redirect('/lessee');
             // return res.redirect(`/lessee/uploadConfirmation?status=success&id=${result.lastID}`);
         })
     });
 });
 
-router.post('/profile/update', upload.single('user_img'), (req, res) => {
-    console.log(req.cookies.user);
-    if (!req.cookies.user) {
-        res.clearCookie('user');
-        req.session.popup = "not login";
-        return res.redirect('/log-in');
-    }
-    if (req.cookies.user.user_type != 1) {
-        req.cookies.popup = "not lessee";
-        return res.redirect('/log-in');
-    }
-    if (req.cookies.user.user_status != "Verify") {
-        req.session.popup = "user not verify";
-        return res.redirect('/log-in');
-    }
+router.post('/profile/update', checkAuthen, upload.single('user_img'), (req, res) => {
 
     const userId = req.cookies.user.user_id;
     const { first_name, last_name, email, phone, user_name } = req.body;
@@ -313,7 +236,7 @@ router.post('/profile/update', upload.single('user_img'), (req, res) => {
     });
 });
 
-router.post('/set-payment', (req, res) => {
+router.post('/set-payment', checkAuthen, (req, res) => {
     req.session.payment = req.body.money;
     req.session.billID = req.body.billID;
 

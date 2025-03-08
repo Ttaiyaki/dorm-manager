@@ -56,6 +56,7 @@ app.get('/register', (req, res) => {
 
 app.get('/logout', (req, res) => {
   res.clearCookie("user");
+  delete req.session.payment;
   return res.redirect('/log-in');
 })
 

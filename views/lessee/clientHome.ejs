@@ -1,6 +1,7 @@
 <%- include('../partials/head') %>
 <body>
     <%- include('../partials/nav') %>
+    <%- include('../partials/popup') %>
     <main class="row m-5" style="justify-content: center;">
         <!-- room details part -->
         <div class="card shadow-sm align-items-center" style="margin: 20px; padding: 15px; width: 30%;">
@@ -11,7 +12,7 @@
                     <p class="h5 text-secondary">• ตึก <%=room[0].building%> • ชั้น <%=room[0].floor%></p>
                 </div>
                 <p class="text-secondary"><i class="fa-solid fa-tag"></i> รูปแบบห้อง: <%=room[0].type%> | ขนาด: <%=room[0].size%> ตร.ม.</p>
-                <img class="mw-100 rounded card-img" style="width: 90%;" alt="room101-picture" src="https://www.grandecentrepointpattaya.com/upload/rooms-and-suites/2-rooms-and-suites.jpg?v=66">
+                <img class="mw-100 rounded card-img" style="width: 90%;" alt="room101-picture" src="<%=`data:image/png;base64,${room[0].room_image.toString('base64')}`;%>">
 
                 <!-- use db -->
                 <div class="row border-top my-5"></div>
