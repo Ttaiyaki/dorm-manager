@@ -1,194 +1,176 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>จัดการผู้เช่า</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Charmonman:wght@400;700&family=Noto+Sans+Thai:wght@100..900&family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-      *{
-          font-family: "Noto Sans Thai", serif;
-      }
-      .edit-btn {
-        background-color: red;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-      }
-      .popup {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        padding: 20px;
-        border: 1px solid rgb(13, 13, 13);
-      }
-      nav {
-            background: #333;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-        }
-    </style>
-    
+    <title>CustManage</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/css/landlordStyle.css">
   </head>
-  <!-- 
   
-  -->
+  
   <body>
-    <nav>
-        <div style="font-size: 20px; font-weight: bold;">
-            <a href="/">dorm management</a>
-        </div>
-    </nav>
-
-    <div class="container mt-4">
-      <h2 style="text-align: center;">ตารางข้อมูลผู้เช่า</h2>
-      <button class="btn btn-secondary mb-3" style="float: right;"onclick="openPopup()">
-        คำขอเป็นผู้เช่า
+    <%- include('../partials/landlordNav') %>
+    <div class="container mt-nav">
+      <p class="h1 text-center pt-5">ข้อมูลผู้เช่า</p>
+      <button class="btn btn-secondary fas" style="float: right; margin-right: 12px;" data-bs-toggle="modal" data-bs-target="#requestModal">
+        รายการคำขอ
       </button>
-      <table class="table table-bordered">
-        <thead class="table-light">
-          <tr>
-            <th>ชื่อ</th>
-            <th>ห้อง</th>
-            <th>เบอร์โทร</th>
-            <th style="width: 74px; text-align: center;">จัดการ</th>
-          </tr>
-        </thead>
-        <tbody id="customerTable">
-          <tr>
-            <td contenteditable="false">สมชาย สายชม</td>
-            <td contenteditable="false">101</td>
-            <td contenteditable="false">08xxxxxxxx</td>
-            <td>
-              <button
-                class="edit-btn btn btn-danger"
-                onclick="toggleEdit(this)"
-              >
-                แก้ไข
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td contenteditable="false">สมศรี เป็นหุ่นยนต์</td>
-            <td contenteditable="false">102</td>
-            <td contenteditable="false">08xxxxxxxx</td>
-            <td>
-              <button
-                class="edit-btn btn btn-danger"
-                onclick="toggleEdit(this)"
-              >
-                แก้ไข
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="container" style="margin-top: 55px">
+        <div class="container p-5 my-4 border shadow-sm bg-white">
+            <table class="table table-striped table-bordered text-center" id="customerTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>หมายเลขห้อง</th>
+                        <th>ชื่อผู้เช่า</th>
+                        <th>เบอร์โทร</th>
+                        <th>สิ้นสุดสัญญา</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% customers.forEach((customer) => { %>
+                      <% if (customer.user_status == 'Verify') {%>
+                        <tr id="row-<%= customer.room_id %>">
+                            <td><%= customer.room_number %></td>
+                            <td id="name-<%= customer.room_id %>"><%= customer.first_name %> <%= customer.last_name %></td>
+                            <td id="phone-<%= customer.room_id %>"><%= customer.phone %></td>
+                            <td id="date-<%= customer.room_id %>"><%= customer.date_end || '-' %></td>
+                            <td>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#customerModal-<%= customer.room_id %>" class="text-decoration-none">
+                                    <i class="fa-solid fa-pen"></i> แก้ไขข้อมูล
+                                </a>
+                            </td>
+                        </tr>
+                      <% } %>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <!-- 
     
-    -->
-    <div style="min-width: 500px;" id="popup" class="popup">
-      <h4 style="text-align: center;">รายการคำขอ</h4>
-      <table class="table table-bordered">
-        <thead class="table-light">
-          <tr>
-            <th>ชื่อ</th>
-            <th>ห้อง</th>
-            <th>เบอร์โทร</th>
-            <th>อนุมัติ</th>
-          </tr>
-        </thead>
-        <tbody id="requestTable">
-          <tr>
-            <td>ธนพัน จันทร์อังคาร</td>
-            <td>103</td>
-            <td>084xxxxxxx</td>
-            <td>
-              <button class="btn btn-success" onclick="approveCustomer(this)">
-                Allow
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>อรรถพล ข้าวมันไก่</td>
-            <td>104</td>
-            <td>080xxxxxxx</td>
-            <td>
-              <button class="btn btn-success" onclick="approveCustomer(this)">
-                Allow
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>ชน กันต์</td>
-            <td>105</td>
-            <td>081xxxxxxx</td>
-            <td>
-              <button class="btn btn-success" onclick="approveCustomer(this)">
-                Allow
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <button class="btn btn-primary" onclick="closePopup()">ปิด</button>
+    <% customers.forEach((customer) => { %>
+    <div class="modal fade" id="customerModal-<%= customer.room_id %>">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">แก้ไขข้อมูลผู้เช่า ห้อง <%= customer.room_number %></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-5">
+                    <label>ชื่อ:</label>
+                    <input type="text" class="form-control mb-2" id="edit-name-<%= customer.room_id %>" value="<%= customer.first_name %> <%= customer.last_name %>">
+                    <label>เบอร์โทร:</label>
+                    <input type="text" class="form-control mb-2" id="edit-phone-<%= customer.room_id %>" value="<%= customer.phone %>">
+                    <label>สิ้นสุดสัญญา:</label>
+                    <input type="date" class="form-control mb-2" id="edit-date-<%= customer.room_id %>" value="<%= customer.date_end || '' %>">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="saveChanges('<%= customer.room_id %>')">บันทึก</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">ออก</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <!-- 
-    
-    -->
-    <script>
-      function toggleEdit(button) {
-        let row = button.parentElement.parentElement;
-        let cells = row.querySelectorAll("td[contenteditable]");
-        let isEditing = cells[0].isContentEditable;
+    <% }); %>
 
-        cells.forEach((cell) => (cell.contentEditable = !isEditing));
-        button.textContent = isEditing ? "แก้ไข" : "ยืนยัน";
-        button.classList.toggle("btn-danger", isEditing);
-        button.classList.toggle("btn-success", !isEditing);
+    <div class="modal fade" id="requestModal">
+      <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">รายการคำขอ</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body p-5">
+                  <table class="table table-bordered text-center" id="requestTable">
+                      <thead>
+                          <tr>
+                              <th>หมายเลขห้อง</th>
+                              <th>ชื่อผู้เช่า</th>
+                              <th>เบอร์โทร</th>
+                              <th>สิ้นสุดสัญญา</th>
+                              <th>อนุมัติ</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <% customers.forEach((customer) => { %>
+                              <% if (customer.user_status != 'Verify') { %>
+                                  <tr id="request-<%= customer.room_id %>">
+                                      <td><%= customer.room_number %></td>
+                                      <td><%= customer.first_name %> <%= customer.last_name %></td>
+                                      <td><%= customer.phone %></td>
+                                      <td><%= customer.date_end || '-' %></td>
+                                      <td>
+                                          <button class="btn btn-success" onclick="approveCustomer('<%= customer.room_id %>', '<%= customer.room_number %>')">ยอมรับ</button>
+                                      </td>
+                                  </tr>
+                              <% } %>
+                          <% }); %>
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <script>
+      function saveChanges(room_id) {
+          const newName = document.getElementById(`edit-name-${room_id}`).value;
+          const newPhone = document.getElementById(`edit-phone-${room_id}`).value;
+          const newDate = document.getElementById(`edit-date-${room_id}`).value;
+          
+          document.getElementById(`name-${room_id}`).innerText = newName;
+          document.getElementById(`phone-${room_id}`).innerText = newPhone;
+          document.getElementById(`date-${room_id}`).innerText = newDate || 'ว่าง';
+          
+          let modal = bootstrap.Modal.getInstance(document.getElementById(`customerModal-${room_id}`));
+          modal.hide();
       }
 
-      function openPopup() {
-        document.getElementById("popup").style.display = "block";
+      function approveCustomer(room_id, room_number) {
+          const row = document.getElementById(`request-${room_id}`);
+          if (!row) return;
+
+          const name = row.cells[1].innerText;
+          const phone = row.cells[2].innerText;
+          const date = row.cells[3].innerText;
+
+          const newRow = document.createElement("tr");
+          newRow.id = `row-${room_id}`;
+          newRow.innerHTML = `
+              <td>${room_number}</td>
+              <td id="name-${room_id}">${name}</td>
+              <td id="phone-${room_id}">${phone}</td>
+              <td id="date-${room_id}">${date}</td>
+              <td>
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#customerModal-${room_id}" class="text-decoration-none">
+                      <i class="fa-solid fa-pen"></i> แก้ไขข้อมูล
+                  </a>
+              </td>
+          `;
+
+          const table = document.getElementById("customerTable").querySelector("tbody");
+          const rows = Array.from(table.querySelectorAll("tr"));
+          let inserted = false;
+          
+          for (let i = 0; i < rows.length; i++) {
+              const existingRoom = parseInt(rows[i].cells[0].innerText, 10);
+              if (parseInt(room_number, 10) < existingRoom) {
+                  table.insertBefore(newRow, rows[i]);
+                  inserted = true;
+                  break;
+              }
+          }
+          if (!inserted) {
+              table.appendChild(newRow);
+          }
+          
+          row.remove();
       }
 
-      function closePopup() {
-        document.getElementById("popup").style.display = "none";
-      }
-
-      function approveCustomer(button) {
-        let row = button.parentElement.parentElement;
-        let name = row.cells[0].textContent;
-        let room = row.cells[1].textContent;
-        let phone = row.cells[2].textContent;
-
-        let table = document.getElementById("customerTable");
-        let newRow = table.insertRow();
-        newRow.innerHTML = `
-                <td contenteditable="false">${name}</td>
-                <td contenteditable="false">${room}</td>
-                <td contenteditable="false">${phone}</td>
-                <td><button class="edit-btn btn btn-danger" onclick="toggleEdit(this)">แก้ไข</button></td>
-            `;
-
-        row.remove();
-      }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </script>
   </body>
-</html>
+</html>  
+
