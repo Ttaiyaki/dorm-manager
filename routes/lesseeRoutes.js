@@ -30,6 +30,7 @@ router.get('/', (req, res) => {
             return 
         }
         console.log(room_id[0].room_id);
+        res.cookie('room_id', room_id[0].room_id, { httpOnly: true, maxAge: 3600000 });
         
         const getRoom = ` SELECT * FROM rooms r
                       INNER JOIN room_facilities rf USING (room_id)
@@ -65,7 +66,7 @@ router.get('/', (req, res) => {
                     if (err) {return console.log(err);}
                     if (meter.length === 0) {console.log('no meter')}
                     console.log(meter)
-                    return res.render('lessee/clientHome', {room : room, bill : bill, meter : meter})
+                    return res.render('lessee/clientHome', {room : room, bills : bill, meter : meter})
                 })
             })
         })
@@ -122,14 +123,66 @@ router.get('/payment-history', (req, res) => {
         req.session.popup = "user not verify";
         return res.redirect('/log-in');
     }
-    lesseeService.getUserByID(req.cookies.user_id, (err, user) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
 
-        console.log(user)
+    const getBill = `SELECT * FROM bills
+                     WHERE user_id = ? AND bill_status != 'unsend'
+                     ORDER BY bill_status`;
+    lesseeService.getData(getBill, [req.cookies.user.user_id], (err, bills) => {
+        if (err) {return console.log(err.message);}
+        if (bills.length === 0) {console.log('no bills');}
         
-        return res.render('lessee/payment-history-page', { data : user });
+        let billID = []
+        bills.forEach(bill => {
+            billID.push(bill.bill_id);
+
+            if (bill.bill_status == "unpaid") {
+                bill.bill_status = "ยังไม่จ่าย"
+            } else if (bill.bill_status == "paid") {
+                bill.bill_status = "จ่ายแล้ว"
+            }
+        })
+        // console.log(bills)
+
+        const getPayment = `SELECT * FROM payments WHERE bill_id IN (${billID.map(() => '?').join(', ')});`;
+        lesseeService.getData(getPayment, billID, (err, payments) => {
+            if (err) {return console.log(err.message);}
+            // console.log(payments)
+            if (payments) {
+                payments.forEach(payment => {
+                    if (payment.payment_slip) {
+                        payment.payment_slip = `data:image/png;base64,${payment.payment_slip.toString('base64')}`;
+                    }
+                })
+            }
+
+            const getRoom = `SELECT * FROM rooms WHERE room_id = ?;`;
+            lesseeService.getData(getRoom, [req.cookies.room_id], (err, rooms) => {
+                if (err) {return console.log(err.message);}
+
+                const getMeter = `SELECT * FROM meters WHERE room_id = ?;`;
+                lesseeService.getData(getMeter, [req.cookies.room_id], (err, meters) => {
+                    if (err) {return console.log(err.message);}
+                    bills.forEach(bill => {
+                        payments.forEach(payment => {
+                            if (bill.bill_id == payment.bill_id) {
+                                bill.payment = payment;
+                                console.log(bill)
+                            }
+                        })
+                        bill.room = rooms[0];
+
+                        meters.forEach(meter => {
+                            if (meter.meter_month == bill.month) {
+                                bill.meter = meter
+                            }
+                        })
+                        bill.month = new Date(bill.month).toLocaleDateString('th-Th', { month: 'long' });
+                    })
+                    console.log(bills)
+                    return res.render('lessee/payment-history-page', { bills : bills, payments : payments })
+                })
+            })
+        })
     })
 });
 

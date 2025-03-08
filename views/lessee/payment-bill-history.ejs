@@ -2,11 +2,11 @@
 
 <div class="row" style="margin-left: 5px;">
     <!-- connected database : month, date, room-->
-    <p class="col"><span style="font-weight: 700;">เลขที่</span> <%=bills[0].bill_id.toString().padStart(3, '0')%></p>
-    <p class="col-5"><span style="font-weight: 700;">เลขที่ห้อง</span> <%=room[0].room_number%></p>
+    <p class="col"><span style="font-weight: 700;">เลขที่</span> <%=bill.bill_id.toString().padStart(3, '0')%></p>
+    <p class="col-5"><span style="font-weight: 700;">เลขที่ห้อง</span> <%=bill.room.room_number%></p>
 </div>
 <div class="row ml-2" style="margin-left: 5px;">
-    <p class="col pl-1"><span style="font-weight: 700;">ประจำเดือน</span> <%=bills[0].month%></p>
+    <p class="col pl-1"><span style="font-weight: 700;">ประจำเดือน</span> <%=bill.month%></p>
 </div>
 
 <table class="table table-bordered">
@@ -23,26 +23,26 @@
         <tr style="text-align: center;">
             <td style="text-align: left;">ค่าเช่าห้อง</td>
             <td>1</td>
-            <td><%=room[0].rent%></td>
-            <td><%=bills[0].rent%></td>
+            <td><%=bill.room.rent%></td>
+            <td><%=bill.rent%></td>
         </tr>
         <tr style="text-align: center;">
             <td style="text-align: left;">ค่าไฟ</td>
-            <td style="text-align: center;"><%=meter[0].meter_elect%></td>
-            <td><%=room[0].elect_per_unit%></td>
-            <td><%=bills[0].elect_bill%></td>
+            <td style="text-align: center;"><%=bill.meter.meter_elect%></td>
+            <td><%=bill.room.elect_per_unit%></td>
+            <td><%=bill.elect_bill%></td>
         </tr>
         <tr style="text-align: center;">
             <td style="text-align: left;">ค่าน้ำ</td>
-            <td><%=meter[0].meter_water%></td>
-            <td><%=room[0].water_per_unit%></td>
-            <td><%=bills[0].water_bill%></td>
+            <td><%=bill.meter.meter_water%></td>
+            <td><%=bill.room.water_per_unit%></td>
+            <td><%=bill.water_bill%></td>
         </tr>
         <tr style="text-align: center;">
             <td colspan="3" style="font-weight: 700;">รวม</td>
-            <td><%=bills[0].total%></td>
+            <td><%= bill.rent+bill.water_bill+bill.elect_bill %></td>
         </tr>
     </tbody>
 </table>
 
-<p class="h6 text-danger">*** ชำระเงินภายในวันที่ <%=bills[0].due_date%></p>
+<p class="h6 text-danger">*** ชำระเงินภายในวันที่ <%=bill.due_date%></p>
