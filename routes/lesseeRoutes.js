@@ -59,6 +59,7 @@ router.get('/', (req, res) => {
                     });
                     bill[0].old_bill = bill[0].total - bill[0].current; // ลบ bill ล่าสุด
                     bill[0].due_date = new Date(bill[0].due_date).toLocaleDateString('th-Th', { day: "numeric", month: "long", year: "numeric" });
+                    res.cookie("total", bill[0].total, { httpOnly: true, maxAge: 3600000 });
                 }
 
                 const getMeter = `SELECT * FROM meters WHERE room_id = ? ORDER BY meter_id DESC LIMIT 1`;
@@ -93,6 +94,12 @@ router.get('/profile', (req, res) => {
             return res.status(500).json({ error: err.message });
         }
         if (user.length === 0) {console.log('no user')}
+
+        if (user.user_img) {
+            user.user_img = `data:image/png;base64,${user.user_img.toString('base64')}`;
+        } else {
+            user.user_img = '/image/defaultProfile.jpg';
+        }
 
         console.log(user)
         
@@ -201,7 +208,24 @@ router.get('/profile/edit', (req, res) => {
         req.session.popup = "user not verify";
         return res.redirect('/log-in');
     }
-    res.render('lessee/profile-edit');
+    lesseeService.getUserByID(req.cookies.user.user_id, (err, user) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        if (user.length === 0) {console.log('no user')}
+
+        console.log(user)
+        
+        const getRoom = `SELECT * FROM rooms WHERE room_id = ?;`;
+        lesseeService.getData(getRoom, [user.room_id], (err, room) => {
+            if (err) {return console.log(err.message)}
+            if (room.length === 0) {console.log('no room');}
+
+            console.log(room[0])
+            return res.render('lessee/profile-edit', { user : user, room : room[0] });
+        })
+        
+    })
 });
 
 router.get('/uploadConfirmation', (req, res) => {
@@ -220,8 +244,9 @@ router.get('/uploadConfirmation', (req, res) => {
         return res.redirect('/log-in');
     }
     const status = req.cookies.user.user_status;
+    console.log(req.cookies.total)
 
-    res.render('lessee/uploadConfirmation', { status });
+    res.render('lessee/uploadConfirmation', { status : status, total: req.cookies.total });
 });
 
 router.post('/upload', upload.single('payment_slip'), (req, res) => {
@@ -273,6 +298,8 @@ router.post('/profile/update', upload.single('user_img'), (req, res) => {
         }
         res.redirect('/lessee/profile');
     });
+
+    
 });
 
 module.exports = router;

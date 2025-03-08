@@ -349,10 +349,22 @@ router.post('/sendBills', (req, res) => {
   });
 });
 
+/*room_id, room_number, user_id, first_name, last_name, phone, date_end, user_status*/
 router.get('/lessee-info', (req, res) => {
-  res.render('lesser/customer-info');
+  const query = ` SELECT * 
+                  FROM users
+                  LEFT JOIN rooms
+                  USING (room_id)
+                  LEFT JOIN accounts
+                  USING (user_id)
+                  ORDER BY room_number`
+  db.all(query, (err, rows) => {
+      if (err) {
+          return res.status(500).send("เกิดข้อผิดพลาดในการดึงข้อมูล");
+      }
+      res.render('lesser/customer-info', { customers: rows });
+  });
 });
-
 
 
 router.get('/user_img/:id', (req, res) => {
