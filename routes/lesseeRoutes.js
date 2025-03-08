@@ -53,13 +53,9 @@ router.get('/', (req, res) => {
                     bill[0].month = monthName;
 
                     bill[0].current = bill[0].rent + bill[0].elect_bill + bill[0].water_bill // รวมค่าน้ำค่าไฟ
-                    bill[0].total = 0;
-                    bill.forEach(billEach => {
-                        bill[0].total += billEach.rent + billEach.water_bill + billEach.elect_bill; // bill เก่า
-                    });
-                    bill[0].old_bill = bill[0].total - bill[0].current; // ลบ bill ล่าสุด
                     bill[0].due_date = new Date(bill[0].due_date).toLocaleDateString('th-Th', { day: "numeric", month: "long", year: "numeric" });
-                    res.cookie("total", bill[0].total, { httpOnly: true, maxAge: 3600000 });
+                    req.session.payment = bill[0].current;
+                    req.session.billID = bill[0].bill_id;
                 }
 
                 const getMeter = `SELECT * FROM meters WHERE room_id = ? ORDER BY meter_id DESC LIMIT 1`;
@@ -67,6 +63,7 @@ router.get('/', (req, res) => {
                     if (err) {return console.log(err);}
                     if (meter.length === 0) {console.log('no meter')}
                     console.log(meter)
+
                     return res.render('lessee/clientHome', {room : room, bills : bill, meter : meter})
                 })
             })
@@ -230,6 +227,7 @@ router.get('/profile/edit', (req, res) => {
 
 router.get('/uploadConfirmation', (req, res) => {
     console.log(req.cookies.user);
+    // console.log(req.session.payment)
     if (!req.cookies.user) {
         res.clearCookie('user');
         req.session.popup = "not login";
@@ -243,10 +241,10 @@ router.get('/uploadConfirmation', (req, res) => {
         req.session.popup = "user not verify";
         return res.redirect('/log-in');
     }
-    const status = req.cookies.user.user_status;
-    console.log(req.cookies.total)
+    const payment = req.session.payment;
 
-    res.render('lessee/uploadConfirmation', { status : status, total: req.cookies.total });
+    console.log(payment)
+    res.render('lessee/uploadConfirmation', { payment : payment });
 });
 
 router.post('/upload', upload.single('payment_slip'), (req, res) => {
@@ -264,11 +262,20 @@ router.post('/upload', upload.single('payment_slip'), (req, res) => {
         req.session.popup = "user not verify";
         return res.redirect('/log-in');
     }
-    const billId = req.cookies.bill_id;
+    const billId = req.session.billID;
     const fileBuffer = req.file.buffer;
 
     lesseeService.savePaymentSlip(billId, fileBuffer, (err, result) => {
-        res.redirect(`/lessee/uploadConfirmation?status=success&id=${result.lastID}`);
+        if (err) {return console.log(err.message);}
+
+        const setPaid = `UPDATE bills SET bill_status = 'paid' WHERE bill_id = ?`;
+        lesseeService.updateData(setPaid, [billId], (err) => {
+            if (err) {return console.log(err.message);}
+
+            req.session.popup = "payment success";
+            return res.redirect('/');
+            // return res.redirect(`/lessee/uploadConfirmation?status=success&id=${result.lastID}`);
+        })
     });
 });
 
@@ -298,8 +305,16 @@ router.post('/profile/update', upload.single('user_img'), (req, res) => {
         }
         res.redirect('/lessee/profile');
     });
-
-    
 });
+
+router.post('/set-payment', (req, res) => {
+    req.session.payment = req.body.money;
+    req.session.billID = req.body.billID;
+
+    res.json({
+        success: true,
+        message: "Payment saved to session successfully!"
+    });
+})
 
 module.exports = router;

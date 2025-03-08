@@ -60,6 +60,13 @@
                                         </div>
                                         <div class="modal-body p-5 pt-3">
                                             <%- include('payment-bill-history', {bill}) %>
+
+                                            <% if (bill.bill_status == 'ยังไม่จ่าย') { %>
+                                                <div class="d-flex justify-content-center">
+                                                    <button class="btn btn-primary" onclick="payment('<%= bill.rent+bill.water_bill+bill.elect_bill %>', '<%=bill.bill_id%>')">ชำระเงิน</button>
+                                                </div>
+                                            <% } %>
+                                            
                                             <h4  style="font-weight: 600; padding-top: 20px;">หลักฐานการชำระเงิน</h4>
                                             <img src="
                                             <% if (bill.bill_status == "จ่ายแล้ว") { %>
@@ -77,6 +84,21 @@
             </tbody>
         </table>
     </div>
+    <script>
+        const payment = (money, billID) => {
+            fetch('/lessee/set-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ money : money, billID : billID })
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = '/lessee/uploadConfirmation'
+            })
+            .catch(error => console.error("Error:", error));
+        }
+        
+    </script>
 </body>
 <%- include('../partials/footer') %>
 </html>

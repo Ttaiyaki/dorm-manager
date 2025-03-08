@@ -11,11 +11,11 @@ const getUserByID = (id, callback) => {
 
 const savePaymentSlip = (billID, fileBuffer, callback) => {
     const paymentStatus = 'pending';
-    const paymentDate = new Date().toISOString();
-    const query = `INSERT INTO payments (bill_id, payment_slip, payment_status, payment_date) 
+    const paymentDate = new Date().toISOString().split('T')[0];
+    const insertPayment = `INSERT INTO payments (bill_id, payment_slip, payment_status, payment_date)
                    VALUES (?, ?, ?, ?)`;
 
-    db.run(query, [billID, fileBuffer, paymentStatus, paymentDate], function (err) {
+    db.run(insertPayment, [billID, fileBuffer, paymentStatus, paymentDate], function (err) {
         if (err) {
             console.log('Error saving payment slip to database:', err);
             return callback(err);
