@@ -40,7 +40,7 @@ router.get('/', (req, res) => {
             if (room.length === 0) {console.log('no room')}
             console.log(room);
 
-            const getBill = ` SELECT * FROM bills WHERE user_id = ? ORDER BY bill_id DESC LIMIT 1 `;
+            const getBill = ` SELECT * FROM bills WHERE user_id = ? AND bill_status = 'unpaid' ORDER BY bill_id DESC `;
             lesseeService.getData(getBill, [req.cookies.user.user_id], (err, bill) => {
                 if (err) {return console.log(err.message);}
                 if (bill.length === 0) {console.log('no bill')}
@@ -51,7 +51,12 @@ router.get('/', (req, res) => {
                     const monthName = date.toLocaleDateString('th-Th', { month: 'long' }); // แปลงเดือนเป็นชื่อเดือนไทย
                     bill[0].month = monthName;
 
-                    bill[0].total = bill[0].elect_bill + bill[0].water_bill // รวมค่าน้ำค่าไฟ
+                    bill[0].current = bill[0].rent + bill[0].elect_bill + bill[0].water_bill // รวมค่าน้ำค่าไฟ
+                    bill[0].total = 0;
+                    bill.forEach(billEach => {
+                        bill[0].total += billEach.rent + billEach.water_bill + billEach.elect_bill; // bill เก่า
+                    });
+                    bill[0].old_bill = bill[0].total - bill[0].current; // ลบ bill ล่าสุด
                     bill[0].due_date = new Date(bill[0].due_date).toLocaleDateString('th-Th', { day: "numeric", month: "long", year: "numeric" });
                 }
 
