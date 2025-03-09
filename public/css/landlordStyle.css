@@ -5,6 +5,10 @@
 body{
     background-color: #FFF2F2;
 }
+.bg-danger-light {
+    background-color: #dc3848bf;
+    color: white;
+}
 .circle {
     width: 15px;
     height: 15px;

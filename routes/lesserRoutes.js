@@ -52,11 +52,6 @@ let db = new sqlite3.Database('dormitory.db', (err) =>{
             if (err) {
               console.log(err.message);
             }
-            console.log({
-              roomData: roomData,
-              paymentData: paymentData,
-              lesseeData: lesseeData,
-            })
             res.render('lesser/lesserHome', {
               roomData: roomData,
               paymentData: paymentData,
@@ -210,16 +205,28 @@ router.post('/save-bill', (req, res) => {
   checkAuthen(req, res);
   const { user_id, month, due_date, rent, elect_bill, water_bill } = req.body;
 
+  const getBill = ` SELECT bill_id
+                    FROM bills
+                    WHERE month='${month}' AND user_id=${user_id};`;
   const insertBill = `INSERT INTO bills (user_id, month, bill_status, rent, elect_bill, water_bill, due_date)
                       VALUES (${user_id}, '${month}', 'unsend', ${rent}, ${elect_bill}, ${water_bill}, '${due_date}');`;
-
-  db.run(insertBill, function(err) {
-      if (err) {
-        console.log(err.message);
-        return res.json({ success: false, message: err.message});
-      }
-      res.json({ success: true });
+  db.all(getBill, (err, rows) => {
+    if (err) {
+      return res.json({ success: false, message: err.message});
+    }
+    if(rows.length>0){
+      return res.json({ success: false, message: 'ไม่สามารถบันทึกบิลได้เนื่องจากผู้เช่ามีบิลเดือนนั้นอยู่แล้ว'});
+    }else{
+      db.run(insertBill, function(err) {
+        if (err) {
+          console.log(err.message);
+          return res.json({ success: false, message: err.message});
+        }
+        res.json({ success: true });
+      });
+    }
   });
+  
 });
 
 router.post('/save-meter', (req, res) => {
@@ -383,7 +390,13 @@ router.get('/bills', (req, res) => {
                   LEFT JOIN rooms
                   USING (room_id)
                   WHERE date_start < '${nextMonth}' AND user_status = 'Verify'
-                  ORDER BY bill_status desc, bill_id;`;
+                  ORDER BY  CASE 
+                                WHEN bill_status = 'unsend' THEN 1
+                                WHEN bill_status IS NULL THEN 2
+                                WHEN bill_status = 'paid' THEN 3
+                                WHEN bill_status = 'unpaid' THEN 4
+                            END, 
+                            bill_id;`;
   db.all(query, (err, rows) => {
     if (err) {
       console.log(err.message);
@@ -462,6 +475,19 @@ router.post('/update-cust-info/:id', (req, res) => {
                                   date_end = '${date_end}'
                               WHERE user_id = ${user_id};`;
   db.run(updateCustomerinfo, function(err) {
+    if (err) {
+      console.log(err.message);
+    }
+    res.redirect('/lesser/lessee-info')
+  });
+});
+
+router.post('/allow-cust/:id', (req, res) => {
+  const user_id = req.params.id;
+  const updateAllowedcustomer = `UPDATE accounts
+                                SET user_status = 'Verify'
+                                WHERE user_id = ${user_id};`;
+  db.run(updateAllowedcustomer, function(err) {
     if (err) {
       console.log(err.message);
     }

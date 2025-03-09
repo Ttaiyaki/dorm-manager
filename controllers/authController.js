@@ -38,7 +38,7 @@ const loginUser = (req, res) => {
             // ตั้งค่า ID ใน cookie หลังจาก login สำเร็จ
             res.cookie('user', user_info, { httpOnly: true, maxAge: 3600000 });  // ตั้งค่า cookie user_id
             if (user[0].user_type === 1) {return res.redirect('/lessee');}
-            return res.redirect('/lesser/rooms');
+            return res.redirect('/lesser/');
         });
     });
 };

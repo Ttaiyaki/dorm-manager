@@ -131,7 +131,7 @@
                                     <h4 class="card-title"><%=room.first_name%> <%=room.last_name%></h4>
                                     <p class="card-text">เบอร์โทร. <%=room.phone%></p>
                                     <div class="mt-auto">
-                                        <a href="#" class="btn btn-primary">ดูข้อมูลผู้เช่า</a>
+                                        <a href="/lesser/lessee-info" class="btn btn-primary">ดูข้อมูลผู้เช่า</a>
                                         <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDelete">ลบ</a>
                                     </div>
                                 </div>
@@ -394,6 +394,10 @@
 
             if (!month || !due_date || elect_bill === "-" || water_bill === "-" || new Date(due_date) < new Date()) {
                 showAlert(false, "กรุณากรอกรอบบิลและวันครบกำหนดชำระให้ถูกต้อง!");
+                return;
+            }
+            if (month < "<%=room.date_start.slice(0,7)%>" ) {
+                showAlert(false, "ไม่สามารถบันทึกบิลได้ เนื่องจากผู้เช่าไม่ได้เช่าอยู่ในเดือนที่เลือก");
                 return;
             }
 
