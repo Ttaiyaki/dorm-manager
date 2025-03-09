@@ -11,6 +11,7 @@
   </head>
   
   
+
   <body>
     <%- include('../partials/landlordNav') %>
     <div class="container mt-nav">
@@ -24,7 +25,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th>หมายเลขห้อง</th>
-                        <th>ชื่อผู้เช่า</th>
+                        <th>ชื่อ</th><th>นามสกุล</th>
                         <th>เบอร์โทร</th>
                         <th>สิ้นสุดสัญญา</th>
                         <th>จัดการ</th>
@@ -35,9 +36,9 @@
                       <% if (customer.user_status == 'Verify') {%>
                         <tr id="row-<%= customer.room_id %>">
                             <td><%= customer.room_number %></td>
-                            <td id="name-<%= customer.room_id %>"><%= customer.first_name %> <%= customer.last_name %></td>
+                            <td id="first_name-<%= customer.room_id %>"><%= customer.first_name %></td> <td id="last_name-<%= customer.room_id  %>"><%= customer.last_name %></td>
                             <td id="phone-<%= customer.room_id %>"><%= customer.phone %></td>
-                            <td id="date-<%= customer.room_id %>"><%= customer.date_end || '-' %></td>
+                            <td id="date-<%= customer.room_id %>"><%= customer.date_end || 'ว่าง' %></td>
                             <td>
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#customerModal-<%= customer.room_id %>" class="text-decoration-none">
                                     <i class="fa-solid fa-pen"></i> แก้ไขข้อมูล
@@ -52,29 +53,41 @@
     </div>
     
     <% customers.forEach((customer) => { %>
-    <div class="modal fade" id="customerModal-<%= customer.room_id %>">
-        <div class="modal-dialog modal-lg">
+    <div class="modal fade" id="customerModal-<%=customer.room_id%>">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">แก้ไขข้อมูลผู้เช่า ห้อง <%= customer.room_number %></h4>
+                    <h4 class="modal-title">แก้ไขข้อมูลผู้เช่า ห้อง <%=customer.room_number%></h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-5">
-                    <label>ชื่อ:</label>
-                    <input type="text" class="form-control mb-2" id="edit-name-<%= customer.room_id %>" value="<%= customer.first_name %> <%= customer.last_name %>">
-                    <label>เบอร์โทร:</label>
-                    <input type="text" class="form-control mb-2" id="edit-phone-<%= customer.room_id %>" value="<%= customer.phone %>">
-                    <label>สิ้นสุดสัญญา:</label>
-                    <input type="date" class="form-control mb-2" id="edit-date-<%= customer.room_id %>" value="<%= customer.date_end || '' %>">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="saveChanges('<%= customer.room_id %>')">บันทึก</button>
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">ออก</button>
-                </div>
+                <form action="/lesser/update-cust-info/<%=customer.user_id%>" method="post">
+                    <div class="modal-body p-5">
+                        
+                        <div class="row">
+                            <div class="col">
+                                <label>ชื่อ:</label>
+                                <input type="text" class="form-control mb-2" id="edit-first_name-<%=customer.room_id%>" name="first_name" value="<%=customer.first_name%>">
+                            </div>
+                            <div class="col">
+                                <label>นามสกุล:</label>
+                                <input type="text" class="form-control mb-2" id="edit-last_name-<%=customer.room_id%>" name="last_name" value=" <%=customer.last_name%>">
+                            </div>
+                        </div>
+                        <label>เบอร์โทร:</label>
+                        <input type="text" class="form-control mb-2" id="edit-phone-<%=customer.room_id%>" name="phone" value="<%=customer.phone%>">
+                        <label>สิ้นสุดสัญญา:</label>
+                        <input type="date" class="form-control mb-2" id="edit-date-<%=customer.room_id%>" name="date_end" value="<%=customer.date_end || '' %>">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" onclick="saveChanges('<%= customer.room_id %>')">บันทึก</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">ออก</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
     <% }); %>
+
 
     <div class="modal fade" id="requestModal">
       <div class="modal-dialog modal-lg">
@@ -101,7 +114,7 @@
                                       <td><%= customer.room_number %></td>
                                       <td><%= customer.first_name %> <%= customer.last_name %></td>
                                       <td><%= customer.phone %></td>
-                                      <td><%= customer.date_end || '-' %></td>
+                                      <td><%= customer.date_end || 'ว่าง' %></td>
                                       <td>
                                           <button class="btn btn-success" onclick="approveCustomer('<%= customer.room_id %>', '<%= customer.room_number %>')">ยอมรับ</button>
                                       </td>
@@ -115,62 +128,52 @@
       </div>
   </div>
 
-  <script>
-      function saveChanges(room_id) {
-          const newName = document.getElementById(`edit-name-${room_id}`).value;
-          const newPhone = document.getElementById(`edit-phone-${room_id}`).value;
-          const newDate = document.getElementById(`edit-date-${room_id}`).value;
-          
-          document.getElementById(`name-${room_id}`).innerText = newName;
-          document.getElementById(`phone-${room_id}`).innerText = newPhone;
-          document.getElementById(`date-${room_id}`).innerText = newDate || 'ว่าง';
-          
-          let modal = bootstrap.Modal.getInstance(document.getElementById(`customerModal-${room_id}`));
-          modal.hide();
-      }
+    <script>
+        function approveCustomer(room_id, room_number) {
+            const row = document.getElementById(`request-${room_id}`);
+            if (!row) return;
 
-      function approveCustomer(room_id, room_number) {
-          const row = document.getElementById(`request-${room_id}`);
-          if (!row) return;
+            const first_name = row.cells[1].innerText;
+            const last_name = row.cells[2].innerText;
+            const phone = row.cells[3].innerText;
+            const date = row.cells[4].innerText;
 
-          const name = row.cells[1].innerText;
-          const phone = row.cells[2].innerText;
-          const date = row.cells[3].innerText;
+            const newRow = document.createElement("tr");
+            newRow.id = `row-${room_id}`;
+            newRow.innerHTML = `
+                <td>${room_number}</td>
+                <td id="first_name-${room_id}">${first_name}</td>
+                <td id="last_name-${room_id}">${last_name}</td>
+                <td id="phone-${room_id}">${phone}</td>
+                <td id="date-${room_id}">${date}</td>
+                <td>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#customerModal-${room_id}" class="text-decoration-none">
+                        <i class="fa-solid fa-pen"></i> แก้ไขข้อมูล
+                    </a>
+                </td>
+            `;
 
-          const newRow = document.createElement("tr");
-          newRow.id = `row-${room_id}`;
-          newRow.innerHTML = `
-              <td>${room_number}</td>
-              <td id="name-${room_id}">${name}</td>
-              <td id="phone-${room_id}">${phone}</td>
-              <td id="date-${room_id}">${date}</td>
-              <td>
-                  <a href="#" data-bs-toggle="modal" data-bs-target="#customerModal-${room_id}" class="text-decoration-none">
-                      <i class="fa-solid fa-pen"></i> แก้ไขข้อมูล
-                  </a>
-              </td>
-          `;
+            const table = document.getElementById("customerTable").querySelector("tbody");
+            const rows = Array.from(table.querySelectorAll("tr"));
+            let inserted = false;
+            
+            for (let i = 0; i < rows.length; i++) {
+                const existingRoom = parseInt(rows[i].cells[0].innerText, 10);
+                if (parseInt(room_number, 10) < existingRoom) {
+                    table.insertBefore(newRow, rows[i]);
+                    inserted = true;
+                    break;
+                }
+            }
+            if (!inserted) {
+                table.appendChild(newRow);
+            }
+            
+            row.remove();
+        }
 
-          const table = document.getElementById("customerTable").querySelector("tbody");
-          const rows = Array.from(table.querySelectorAll("tr"));
-          let inserted = false;
-          
-          for (let i = 0; i < rows.length; i++) {
-              const existingRoom = parseInt(rows[i].cells[0].innerText, 10);
-              if (parseInt(room_number, 10) < existingRoom) {
-                  table.insertBefore(newRow, rows[i]);
-                  inserted = true;
-                  break;
-              }
-          }
-          if (!inserted) {
-              table.appendChild(newRow);
-          }
-          
-          row.remove();
-      }
-
-  </script>
+    </script>
   </body>
 </html>  
+
 

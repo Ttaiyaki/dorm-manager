@@ -434,6 +434,7 @@ router.get('/lessee-info', (req, res) => {
 });
 
 
+
 router.get('/user_img/:id', (req, res) => {
   checkAuthen(req, res);
   const query = ` SELECT user_img
@@ -449,7 +450,22 @@ router.get('/user_img/:id', (req, res) => {
   });
 });
 
-
+router.post('/update-cust-info/:id', (req, res) => {
+  const user_id = req.params.id;
+  const {first_name, last_name, phone, date_end} = req.body
+  const updateCustomerinfo = `UPDATE users
+                              SET first_name = '${first_name}',
+                                  last_name = '${last_name}',
+                                  phone = '${phone}',
+                                  date_end = '${date_end}'
+                              WHERE user_id = ${user_id};`;
+  db.run(updateCustomerinfo, function(err) {
+    if (err) {
+      console.log(err.message);
+    }
+    res.redirect('/lesser/lessee-info')
+  });
+});
 
 const getRoomStatus = (room) => {
   let status;
