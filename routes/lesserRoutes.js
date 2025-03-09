@@ -479,6 +479,19 @@ router.post('/update-cust-info/:id', (req, res) => {
   });
 });
 
+router.post('/allow-cust/:id', (req, res) => {
+  const user_id = req.params.id;
+  const updateAllowedcustomer = `UPDATE accounts
+                                SET user_status = 'Verify'
+                                WHERE user_id = ${user_id};`;
+  db.run(updateAllowedcustomer, function(err) {
+    if (err) {
+      console.log(err.message);
+    }
+    res.redirect('/lesser/lessee-info')
+  });
+});
+
 const getRoomStatus = (room) => {
   let status;
   if (!room.user_id || room.user_status != "Verify") {
