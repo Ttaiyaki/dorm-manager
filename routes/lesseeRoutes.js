@@ -49,6 +49,7 @@ router.get('/', checkAuthen, (req, res) => {
                 else {
                     const date = new Date(bill[0].month);
                     const monthName = date.toLocaleDateString('th-Th', { month: 'long' }); // แปลงเดือนเป็นชื่อเดือนไทย
+                    bill[0].month_old = bill[0].month;
                     bill[0].month = monthName;
 
                     bill[0].current = bill[0].rent + bill[0].elect_bill + bill[0].water_bill // รวมค่าน้ำค่าไฟ
@@ -57,10 +58,20 @@ router.get('/', checkAuthen, (req, res) => {
                     req.session.billID = bill[0].bill_id;
                 }
 
-                const getMeter = `SELECT * FROM meters WHERE room_id = ? ORDER BY meter_id DESC LIMIT 1`;
+                console.log(bill[0].month)
+                const getMeter = `SELECT * FROM meters WHERE room_id = ? ORDER BY meter_id DESC`;
                 lesseeService.getData(getMeter, [room_id[0].room_id], (err, meter) => {
                     if (err) {return console.log(err);}
                     if (meter.length === 0) {console.log('no meter')}
+                    if (meter.length > 1) {
+                        if (meter.meter_month != bill[0].month_old) {
+                            meter[0].meter_water = meter[1].meter_water-meter[2].meter_water;
+                            meter[0].meter_elect = meter[1].meter_elect-meter[2].meter_elect;
+                        } else {
+                            meter[0].meter_water = meter[0].meter_water-meter[1].meter_water;
+                            meter[0].meter_elect = meter[0].meter_elect-meter[1].meter_elect;
+                        }
+                    }
 
                     const popup = req.session.popup;
                     delete req.session.popup;
@@ -134,9 +145,12 @@ router.get('/payment-history', checkAuthen, (req, res) => {
             lesseeService.getData(getRoom, [req.cookies.room_id], (err, rooms) => {
                 if (err) {return console.log(err.message);}
 
-                const getMeter = `SELECT * FROM meters WHERE room_id = ?;`;
+                const getMeter = `SELECT * FROM meters WHERE room_id = ? ORDER BY meter_id DESC;`;
                 lesseeService.getData(getMeter, [req.cookies.room_id], (err, meters) => {
                     if (err) {return console.log(err.message);}
+
+                    let old_water = 0;
+                    let old_elect = 0;
                     bills.forEach(bill => {
                         payments.forEach(payment => {
                             if (bill.bill_id == payment.bill_id) {
@@ -145,8 +159,17 @@ router.get('/payment-history', checkAuthen, (req, res) => {
                         })
                         bill.room = rooms[0];
 
-                        meters.forEach(meter => {
+                        meters.forEach((meter, index) => {
+                            
                             if (meter.meter_month == bill.month) {
+                                const water = meter.meter_water;
+                                const elect = meter.meter_elect;
+                                console.log(`meter water ${index} = ${water}`)
+                                console.log(`old ${index} = ${old_water}`)
+                                meter.meter_water = meter.meter_water-old_water;
+                                meter.meter_elect = meter.meter_elect-old_elect;
+                                old_water = water;
+                                old_elect = elect;
                                 bill.meter = meter
                             }
                         })
