@@ -417,6 +417,7 @@ router.post('/sendBills', (req, res) => {
 
 /*room_id, room_number, user_id, first_name, last_name, phone, date_end, user_status*/
 router.get('/lessee-info', (req, res) => {
+  checkAuthen(req, res);
   const query = ` SELECT * 
                   FROM users
                   LEFT JOIN rooms
@@ -451,6 +452,7 @@ router.get('/user_img/:id', (req, res) => {
 });
 
 router.post('/update-cust-info/:id', (req, res) => {
+  checkAuthen(req, res);
   const user_id = req.params.id;
   const {first_name, last_name, phone, date_end} = req.body
   const updateCustomerinfo = `UPDATE users
