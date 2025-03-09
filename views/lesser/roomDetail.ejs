@@ -391,12 +391,12 @@
             const due_date = document.getElementById("pay-duedate").value;
             const elect_bill = document.getElementById("elect-bill").textContent;
             const water_bill = document.getElementById("water-bill").textContent;
-
+            const dateStart = "<%=room.date_start%>";
             if (!month || !due_date || elect_bill === "-" || water_bill === "-" || new Date(due_date) < new Date()) {
                 showAlert(false, "กรุณากรอกรอบบิลและวันครบกำหนดชำระให้ถูกต้อง!");
                 return;
             }
-            if (month < "<%=room.date_start.slice(0,7)%>" ) {
+            if (month < dateStart.slice(0,7)) {
                 showAlert(false, "ไม่สามารถบันทึกบิลได้ เนื่องจากผู้เช่าไม่ได้เช่าอยู่ในเดือนที่เลือก");
                 return;
             }
