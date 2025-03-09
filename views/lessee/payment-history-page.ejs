@@ -52,7 +52,11 @@
                                 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                     <div class="modal-content" style="width: 150%;">
                                         <div class="modal-header">
-                                            <h2 class="modal-title" style="font-weight: 700;" id="payment-slip-label">รายละเอียดใบเสร็จ</h2>
+                                            <h2 class="modal-title" style="font-weight: 700;" id="payment-slip-label"><% if (bill.bill_status == 'จ่ายแล้ว') { %>
+                                                รายละเอียดใบเสร็จ
+                                            <% } else { %>
+                                                รายละเอียดการชำระเงิน
+                                            <% } %> </h2>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                             </button>
                                         </div>

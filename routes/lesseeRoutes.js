@@ -229,7 +229,6 @@ router.post('/upload', checkAuthen, upload.single('payment_slip'), (req, res) =>
             req.session.popup = "payment success";
             console.log(`User ${req.cookies.user.user_id}'s payment successful.`);
             return res.redirect('/lessee');
-            // return res.redirect(`/lessee/uploadConfirmation?status=success&id=${result.lastID}`);
         })
     });
 });
