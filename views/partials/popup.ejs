@@ -161,7 +161,7 @@
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
-                ขออภัย เนื่องจากไม่มีข้อมูลผู้เช่า ของผู้ให้เช่าในระบบ
+                ไม่พบข้อมูลในระบบ
             </div>
         </div>
     </div>
@@ -204,6 +204,20 @@
             </div>
             <div class="toast-body">
                 ชำระค่าบริการเรียบร้อย ใบเสร็จถูกส่งไปให้ผู้ให้เช่าเพื่อทำการตรวจสอบ
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<% if (popup==="update profile success") { %>
+    <div class="d-flex justify-content-center m-5 card-img-overlay" style="max-height: 13%; color: green;">
+        <div class="toast toast-demo fade show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+            <strong class="me-auto">แจ้งเตือน</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                แก้ไขข้อมูลผู้ใช้สำเร็จเรียบร้อย
             </div>
         </div>
     </div>

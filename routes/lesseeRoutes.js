@@ -15,7 +15,8 @@ const checkAuthen = (req, res, next) => {
         return res.redirect('/log-in');
     }
     else if (req.cookies.user.user_type != 1) {
-        req.cookies.popup = "not lessee";
+        req.session.popup = "not lessee";
+        console.log('im admin');
         return res.redirect('/log-in');
     }
     else if (req.cookies.user.user_status != "Verify") {
@@ -100,7 +101,10 @@ router.get('/profile', checkAuthen, (req, res) => {
             if (room.length === 0) {console.log('no room');}
 
             console.log(room[0])
-            return res.render('lessee/profile', { user : user, room : room[0] });
+
+            const popup = req.session.popup;
+            delete req.session.popup;
+            return res.render('lessee/profile', { user : user, room : room[0], popup : popup });
         })
         
     })
@@ -196,6 +200,7 @@ router.get('/profile/edit', checkAuthen, (req, res) => {
             if (room.length === 0) {console.log('no room');}
 
             console.log(room[0])
+
             return res.render('lessee/profile-edit', { user : user, room : room[0] });
         })
         
@@ -237,6 +242,7 @@ router.post('/profile/update', checkAuthen, upload.single('user_img'), (req, res
         if (err) {
             console.log('Error updating user profile:', err);
         }
+        req.session.popup = "update profile success";
         res.redirect('/lessee/profile');
     });
 });
