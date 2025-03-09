@@ -155,7 +155,7 @@ router.get('/payment-history', checkAuthen, (req, res) => {
                         bill.year = date.getFullYear();
                     })
 
-                    const year = req.query.year||bills[bills.length-1].year;
+                    const year = req.query.year || new Date().getFullYear();
                     return res.render('lessee/payment-history-page', { bills : bills, payments : payments, year : year });
                 })
             })

@@ -39,7 +39,8 @@ let db = new sqlite3.Database('dormitory.db', (err) =>{
     const lesseeCount = ` SELECT count(users.user_id) as user_num, count(user_status) as user_verify_num
                           FROM users
                           LEFT JOIN accounts
-                          ON users.user_id = accounts.user_id AND user_status = 'Verify';`;
+                          ON users.user_id = accounts.user_id AND user_status = 'Verify'
+                          WHERE user_type = 1;`;
     db.each(roomCount, (err, roomData) => {
         if (err) {
           console.log(err.message);
@@ -483,6 +484,7 @@ router.post('/update-cust-info/:id', (req, res) => {
 });
 
 router.post('/allow-cust/:id', (req, res) => {
+  checkAuthen(req, res)
   const user_id = req.params.id;
   const updateAllowedcustomer = `UPDATE accounts
                                 SET user_status = 'Verify'
