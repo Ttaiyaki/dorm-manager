@@ -49,12 +49,12 @@ app.get('/register', (req, res) => {
   let form = req.session.form;
   delete req.session.popup;
   delete req.session.form;
-  console.log(popup)
   if (!form) {form = {};}
   res.render('login/register_page', { popup : popup, data : form });
 })
 
 app.get('/logout', (req, res) => {
+  console.log(`User ${req.cookies.user.user_id} logout.`);
   res.clearCookie("user");
   delete req.session.payment;
   return res.redirect('/log-in');

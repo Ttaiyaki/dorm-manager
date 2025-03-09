@@ -16,7 +16,6 @@ const loginUser = (req, res) => {
             return res.redirect('/log-in');
         }
 
-        console.log(user)
         bcrypt.compare(user_password, user[0].user_password, (err, match) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
@@ -79,8 +78,6 @@ const createUser = (userData, req, res) => {
                     loginService.getData(getUserID, [userData.uname], (err, rows) => {
                         if (err) {return console.log(err.message);}
 
-                        console.log(rows[0].user_id);
-
                         const insertUsersInfo = `INSERT INTO users (user_id, first_name, last_name, email, phone, room_id, date_start, date_end) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
                         loginService.updateData(insertUsersInfo, [rows[0].user_id, userData.fn, userData.ln, userData.email, userData.phone, room_id[0].room_id, userData.date_start, userData.date_end], (err) => {
                             if (err) {return console.log(err.message);}
@@ -110,7 +107,6 @@ const updatePwd = (req, res) => {
             return res.redirect('log-in');
         }
 
-        console.log(user_id)
         const checkRoom = ` SELECT room_id FROM users u
                             INNER JOIN rooms r USING (room_id)
                             WHERE u.user_id = ? AND r.room_number = ?; `;

@@ -8,15 +8,12 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const checkAuthen = (req, res, next) => {
-    console.log(req.cookies.user);
-    console.log(typeof(req.cookies.user)=="undefined");
     if (typeof(req.cookies.user)=="undefined") {
         req.session.popup = "not login";
         return res.redirect('/log-in');
     }
     else if (req.cookies.user.user_type != 1) {
         req.session.popup = "not lessee";
-        console.log('im admin');
         return res.redirect('/log-in');
     }
     else if (req.cookies.user.user_status != "Verify") {
@@ -35,7 +32,6 @@ router.get('/', checkAuthen, (req, res) => {
         if (room_id.length === 0) {
             return 
         }
-        console.log(room_id[0].room_id);
         res.cookie('room_id', room_id[0].room_id, { httpOnly: true, maxAge: 3600000 });
         
         const getRoom = ` SELECT * FROM rooms r
@@ -45,16 +41,13 @@ router.get('/', checkAuthen, (req, res) => {
         lesseeService.getData(getRoom, [room_id[0].room_id], (err, room) => {
             if (err) {return console.log(err.message);}
             if (room.length === 0) {console.log('no room')}
-            console.log(room);
 
             const getBill = ` SELECT * FROM bills WHERE user_id = ? AND bill_status = 'unpaid' ORDER BY bill_id DESC `;
             lesseeService.getData(getBill, [req.cookies.user.user_id], (err, bill) => {
                 if (err) {return console.log(err.message);}
                 if (bill.length === 0) {console.log('no bill')}
                 else {
-                    console.log(bill);
                     const date = new Date(bill[0].month);
-                    console.log(date)
                     const monthName = date.toLocaleDateString('th-Th', { month: 'long' }); // แปลงเดือนเป็นชื่อเดือนไทย
                     bill[0].month = monthName;
 
@@ -68,10 +61,10 @@ router.get('/', checkAuthen, (req, res) => {
                 lesseeService.getData(getMeter, [room_id[0].room_id], (err, meter) => {
                     if (err) {return console.log(err);}
                     if (meter.length === 0) {console.log('no meter')}
-                    console.log(meter)
 
                     const popup = req.session.popup;
                     delete req.session.popup;
+                    console.log(`User ${req.cookies.user.user_id} has connected to system.`);
                     return res.render('lessee/clientHome', {room : room, bills : bill, meter : meter, popup : popup});
                 })
             })
@@ -92,15 +85,11 @@ router.get('/profile', checkAuthen, (req, res) => {
         } else {
             user.user_img = '/image/defaultProfile.jpg';
         }
-
-        console.log(user)
         
         const getRoom = `SELECT * FROM rooms WHERE room_id = ?;`;
         lesseeService.getData(getRoom, [user.room_id], (err, room) => {
             if (err) {return console.log(err.message)}
             if (room.length === 0) {console.log('no room');}
-
-            console.log(room[0])
 
             const popup = req.session.popup;
             delete req.session.popup;
@@ -129,12 +118,10 @@ router.get('/payment-history', checkAuthen, (req, res) => {
                 bill.bill_status = "จ่ายแล้ว"
             }
         })
-        // console.log(bills)
 
         const getPayment = `SELECT * FROM payments WHERE bill_id IN (${billID.map(() => '?').join(', ')});`;
         lesseeService.getData(getPayment, billID, (err, payments) => {
             if (err) {return console.log(err.message);}
-            // console.log(payments)
             if (payments) {
                 payments.forEach(payment => {
                     if (payment.payment_slip) {
@@ -154,7 +141,6 @@ router.get('/payment-history', checkAuthen, (req, res) => {
                         payments.forEach(payment => {
                             if (bill.bill_id == payment.bill_id) {
                                 bill.payment = payment;
-                                console.log(bill)
                             }
                         })
                         bill.room = rooms[0];
@@ -165,11 +151,9 @@ router.get('/payment-history', checkAuthen, (req, res) => {
                             }
                         })
                         const date = new Date(bill.month);
-                        console.log(date);
                         bill.month = date.toLocaleDateString('th-TH', { month: 'long' });
                         bill.year = date.getFullYear();
                     })
-                    console.log(bills)
 
                     const year = req.query.year||bills[bills.length-1].year;
                     return res.render('lessee/payment-history-page', { bills : bills, payments : payments, year : year });
@@ -191,15 +175,11 @@ router.get('/profile/edit', checkAuthen, (req, res) => {
         } else {
             user.user_img = '/image/defaultProfile.jpg';
         }
-
-        console.log(user)
         
         const getRoom = `SELECT * FROM rooms WHERE room_id = ?;`;
         lesseeService.getData(getRoom, [user.room_id], (err, room) => {
             if (err) {return console.log(err.message)}
             if (room.length === 0) {console.log('no room');}
-
-            console.log(room[0])
 
             return res.render('lessee/profile-edit', { user : user, room : room[0] });
         })
@@ -209,8 +189,6 @@ router.get('/profile/edit', checkAuthen, (req, res) => {
 
 router.get('/uploadConfirmation', checkAuthen, (req, res) => {
     const payment = req.session.payment;
-
-    console.log(payment)
     res.render('lessee/uploadConfirmation', { payment : payment });
 });
 
@@ -226,6 +204,7 @@ router.post('/upload', checkAuthen, upload.single('payment_slip'), (req, res) =>
             if (err) {return console.log(err.message);}
 
             req.session.popup = "payment success";
+            console.log(`User ${req.cookies.user.user_id}'s payment successful.`);
             return res.redirect('/lessee');
             // return res.redirect(`/lessee/uploadConfirmation?status=success&id=${result.lastID}`);
         })
@@ -243,6 +222,7 @@ router.post('/profile/update', checkAuthen, upload.single('user_img'), (req, res
             console.log('Error updating user profile:', err);
         }
         req.session.popup = "update profile success";
+        console.log(`User ${req.cookies.user.user_id} has updated profile successfully.`);
         res.redirect('/lessee/profile');
     });
 });
