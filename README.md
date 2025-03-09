@@ -22,13 +22,18 @@
 
   
 ## 🛠️ How to use
+1. กด start.bat เพื่อ run server
+2. ใส่ http://localhost:3000 ในช่อง url ของ browser
+
 สามารถ login เพื่อเข้าใช้ระบบได้ 2 actors
 1. **actor ผู้ให้เช่า**  
    - **username** : admin  
    - **password** : 1234  
 2. **actor ผู้เช่า**  
    - **username** : sangchai  
-   - **password** : 1234  
+   - **password** : 1234
+
+สำหรับการลงทะเบียนของผู้เช่า ในช่องหมายเลขห้องต้องใส่หมายเลขห้องที่มีในระบบเท่านั้น**ซึ่งสามารถดูได้ผ่าน การ login เข้าสู่ระบบของผู้ให้เช่า(admin) แล้วดูหมายเลขห้องจากหน้าห้องพัก (หมายเลขห้องเช่น A101)**
 
 
 ## 👨‍💻 Team Members
@@ -43,7 +48,7 @@
 
 ## 🛠️ Built With
 - **Frontend**: HTML, EJS, CSS, Bootstrap 5
-- **Backend**: Node.js, Express.js
+- **Backend**: Node.js, Express.js, cookie - session, bcrypt
 - **Database**: SQLite
 
 
