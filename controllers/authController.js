@@ -99,7 +99,7 @@ const createUser = (userData, req, res) => {
 const updatePwd = (req, res) => {
     if (req.body.pwd1 != req.body.pwd2) {
         req.session.popup = "password not match";
-        res.redirect('log-in');
+        return res.redirect('/log-in');
     }
 
     const checkEmail = ` SELECT user_id FROM users WHERE email = ?; `;
@@ -107,7 +107,7 @@ const updatePwd = (req, res) => {
         if (err) {return console.log(err.message);}
         if (user_id.length === 0) {
             req.session.popup = "reset page's email not found";
-            return res.redirect('log-in');
+            return res.redirect('/log-in');
         }
 
         const checkRoom = ` SELECT room_id FROM users u
@@ -117,7 +117,7 @@ const updatePwd = (req, res) => {
             if (err) {return console.log(err.message);}
             if (room_number.length === 0) {
                 req.session.popup = "reset page's room_number not match email";
-                return res.redirect('log-in');
+                return res.redirect('/log-in');
             }
 
             bcrypt.hash(req.body.pwd1, 10, (err, hash) => {
