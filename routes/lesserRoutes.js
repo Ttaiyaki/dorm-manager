@@ -423,6 +423,7 @@ router.get('/lessee-info', (req, res) => {
                   USING (room_id)
                   LEFT JOIN accounts
                   USING (user_id)
+                  WHERE accounts.user_type = 1
                   ORDER BY room_number`
   db.all(query, (err, rows) => {
       if (err) {

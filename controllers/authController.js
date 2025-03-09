@@ -7,8 +7,9 @@ const loginUser = (req, res) => {
 
     const getUser = `SELECT * FROM accounts a
                      INNER JOIN users u USING (user_id)
-                     WHERE user_name = ? OR email = ?`;
+                     WHERE a.user_name = ? OR u.email = ?`;
     // ใช้ service เพื่อตรวจสอบข้อมูลผู้ใช้
+    console.log(user_name)
     loginService.getData(getUser, [user_name, user_name], (err, user) => {
         if (err) {
             return res.status(500).json({ error: err.message });
