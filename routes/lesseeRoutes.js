@@ -58,13 +58,12 @@ router.get('/', checkAuthen, (req, res) => {
                     req.session.billID = bill[0].bill_id;
                 }
 
-                console.log(bill[0].month)
                 const getMeter = `SELECT * FROM meters WHERE room_id = ? ORDER BY meter_id DESC`;
                 lesseeService.getData(getMeter, [room_id[0].room_id], (err, meter) => {
                     if (err) {return console.log(err);}
                     if (meter.length === 0) {console.log('no meter')}
-                    if (meter.length > 1) {
-                        if (meter.meter_month != bill[0].month_old) {
+                    if (meter.length > 1 && bill.length != 0) {
+                        if (meter[0].meter_month != bill[0].month_old) {
                             meter[0].meter_water = meter[1].meter_water-meter[2].meter_water;
                             meter[0].meter_elect = meter[1].meter_elect-meter[2].meter_elect;
                         } else {
@@ -164,10 +163,11 @@ router.get('/payment-history', checkAuthen, (req, res) => {
                             if (meter.meter_month == bill.month) {
                                 const water = meter.meter_water;
                                 const elect = meter.meter_elect;
-                                console.log(`meter water ${index} = ${water}`)
+                                
                                 console.log(`old ${index} = ${old_water}`)
                                 meter.meter_water = meter.meter_water-old_water;
                                 meter.meter_elect = meter.meter_elect-old_elect;
+                                console.log(`meter water ${index} = ${water}`)
                                 old_water = water;
                                 old_elect = elect;
                                 bill.meter = meter
