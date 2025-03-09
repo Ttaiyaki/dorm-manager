@@ -1,24 +1,22 @@
 <%- include('../partials/head') %>
 <body>
     <%- include('../partials/nav') %>
-    <script>
-        function goBack() {
-            if (document.referrer) {
-                window.history.back(); // ถ้ามีหน้าก่อนหน้า → ให้ย้อนกลับ
-            } else {
-                window.location.href = '/home'; // ถ้าไม่มีหน้าก่อนหน้า → ไปหน้าหลัก
-            }
-        }
-    </script>
 
     <div class="position-relative text-center" style="margin-top: 60px; margin-left: 50px; margin-bottom: 20px;">
-        <button type="button" class="btn position-absolute start-0 ms-3" onclick="goBack()">
+        <button type="button" class="btn position-absolute start-0 ms-3" onclick="window.location.href='/lessee'">
             <i class="bi bi-arrow-left-circle fa-2x"></i>
         </button>
         <h1 class="fw-bold">ประวัติการชำระค่าเช่า</h1>
     </div>
+    
 
     <div class="card shadow-sm mt-0" style="margin: 50px; padding: 40px;">
+        <div class="d-flex align-items-center mb-4">
+            <div class="input-group me-2" style="width: 12%;">
+                <span class="input-group-text py-2 bg-dark text-light">รอบปี</span>
+                <input type="number" class="form-control" value="<%= year %>" onchange="changeYear(this.value)">
+            </div>
+        </div>
         <table class="table table-bordered align-middle">
             <thead>
                 <tr>
@@ -31,7 +29,7 @@
             </thead>
             <tbody>
                 <!-- use db -->
-                <% bills.forEach((bill) => { %>
+                <% bills.forEach((bill) => { if (bill.year==year) { %>
                     <tr>
                         <td><%=bill.month%></td>
                         <td><% if (bill.payment) { %>
@@ -79,7 +77,7 @@
                             </div>
                         </td>
                     </tr>
-                <% }); %>
+                <% }}); %>
                 
             </tbody>
         </table>
@@ -96,6 +94,10 @@
                 window.location.href = '/lessee/uploadConfirmation'
             })
             .catch(error => console.error("Error:", error));
+        }
+        
+        const changeYear = (year) => {
+            window.location.href = `/lessee/payment-history?year=${year}`;
         }
         
     </script>

@@ -160,10 +160,15 @@ router.get('/payment-history', checkAuthen, (req, res) => {
                                 bill.meter = meter
                             }
                         })
-                        bill.month = new Date(bill.month).toLocaleDateString('th-Th', { month: 'long' });
+                        const date = new Date(bill.month);
+                        console.log(date);
+                        bill.month = date.toLocaleDateString('th-TH', { month: 'long' });
+                        bill.year = date.getFullYear();
                     })
                     console.log(bills)
-                    return res.render('lessee/payment-history-page', { bills : bills, payments : payments })
+
+                    const year = req.query.year||bills[bills.length-1].year;
+                    return res.render('lessee/payment-history-page', { bills : bills, payments : payments, year : year });
                 })
             })
         })
